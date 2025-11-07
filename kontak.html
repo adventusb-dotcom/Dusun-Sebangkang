@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dusun Sebangkang</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+   <header>
+  <div class="logo">Desa Sebangkang</div>
+  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+
+  <nav id="nav-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+
+    <div class="dropdown">
+      <button class="dropbtn">
+        Menu <span class="arrow">&#9662;</span>
+      </button>
+      <div class="dropdown-content">
+        <a href="jelajah.html">Tentang Kami</a>
+        <a href="jelajah2.html">Sejarah</a>
+        <a href="jelajah3.html">Cultur</a>
+        <a href="jelajah4.html">Hutan Adat</a>
+      </div>
+    </div>
+
+    <a href="kontak.html">Kontak</a>
+  </nav>
+</header>
+
+  
+  <section class="kontak reveal">
+  <h2>Hubungi Kami</h2>
+  <p>Silakan kirim pesan melalui form di bawah atau hubungi kami langsung lewat WhatsApp dan support kami melalui Linktree.</p>
+
+  <div class="contact-container">
+    <!-- Formspree -->
+    <form action="https://formspree.io/f/mwpwggpa" method="POST" class="contact-form">
+      <label>Email Anda:</label>
+      <input type="email" name="email" placeholder="masukkan email anda" required>
+
+      <label>Pesan Anda:</label>
+      <textarea name="message" placeholder="Tulis pesan Anda..." required></textarea>
+
+      <button type="submit" class="btn-primary">Kirim Pesan</button>
+    </form>
+
+    <!-- Kontak Langsung -->
+    <div class="contact-links">
+      <h3>Kontak Langsung</h3>
+      <a href="https://wa.me/6285849602534" target="_blank" class="btn-wa">💬 WhatsApp</a>
+      <a href="https://linktr.ee/Boybluesky" target="_blank" class="btn-linktree">🌿 Linktree</a>
+      <a href="mailto:sebangkangcity123@gmail.com" class="btn-email">📧 Email</a>
+    </div>
+  </div>
+</section>
+
+
+     <br><br><br><br>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p><strong>Alamat:</strong> Dusun Sebangkang, Kecamatan Empanang, Kabupaten Kapuas Hulu</p>
+    <p>© 2025 Dusun Sebangkang | Disusun oleh : Adventus 
+      <a href="#">Facebook</a> · 
+      <a href="#">Instagram</a>
+    </p>
+  </footer>
+
+   
+
+  <script src="script.js"></script>
+</body>
+</html>

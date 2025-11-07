@@ -1,0 +1,974 @@
+/* ==== Global ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #2C2C2C;
+  background-color: #FAF7F0;
+}
+
+/* ==== Navbar ==== */
+header {
+  background-color: #6AB04C;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 12px;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* ==== Dropdown Menu ==== */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.arrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.dropdown:hover .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 10;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  color: #2C2C2C;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  transition:  0.3s ease, color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #F2F9F1;
+  color: #6AB04C;
+}
+
+.dropdown:hover .dropdown-content {
+  display: none;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+/* ==== Burger Menu ==== */
+.menu-toggle {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* ==== Responsive (HP/Tablet) ==== */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+    flex-direction: column;
+    background-color: #6AB04C;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    padding: 15px 0;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  nav a {
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  /* Dropdown di HP */
+  .dropdown-content {
+    position: static;
+    display: none;
+    background-color: #5C9441;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .dropdown-content a {
+    color: white;
+    padding-left: 20px;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #4C8431;
+  }
+
+  .dropdown.open .dropdown-content {
+    display: block;
+  }
+}
+
+
+/* ==== Hero ==== */
+.hero {
+  background: url('latar3.jpg') center/cover no-repeat;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  text-shadow: 0 0 10px #000;
+}
+
+.hero-content h1 {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background: #3A86FF;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #265ED1;
+}
+
+/* ==== About ==== */
+.about {
+  padding: 80px 10%;
+  background: #fff; /* PUTIH SOLID — FIX TEMBUS */
+  position: relative;
+  overflow: hidden;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.about .text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.about .text h2 {
+  color: #6AB04C;
+  margin-bottom: 15px;
+}
+
+.about .image {
+  flex: 1;
+  text-align: center;
+}
+
+.about .image img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+/* ==== Potensi ==== */
+.potensi {
+  padding: 70px 10%;
+  text-align: center;
+  background-color: #F2F9F1;
+}
+
+.potensi h2 {
+  color: #6AB04C;
+  margin-bottom: 30px;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  width: 280px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* ==== Galeri ==== */
+.galeri {
+  padding: 70px 10%;
+  text-align: center;
+}
+
+.galeri h2 {
+  color: #6AB04C;
+  margin-bottom: 30px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.gallery-grid img:hover {
+  transform: scale(1.05);
+}
+
+/* ==== Footer ==== */
+footer {
+  background: #8B5E3C;
+  color: white;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+footer a {
+  color: #FFD580;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+    flex-direction: column;
+    background-color: #6AB04C;
+    width: 100%;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .about-content {
+    flex-direction: column;
+  }
+}
+
+/* ===== Scroll Animation ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 0.8s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==== Tambahan Responsif Hero ==== */
+@media (max-width: 600px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+}
+.reveal.delay-1 { transition-delay: 0.2s; }
+.reveal.delay-2 { transition-delay: 0.4s; }
+.reveal.delay-3 { transition-delay: 0.6s; }
+.reveal.delay-4 { transition-delay: 0.8s; }
+.reveal.delay-5 { transition-delay: 1s; }
+
+
+/* jelajah.html*/
+/* ===== PROFIL DUSUN SECTION ===== */
+.profil {
+  background-color: #fff;
+  padding: 80px 10%;
+  color: #333;
+}
+
+.profil-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.profil-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.profil-text h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.profil-text p {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.profil-image {
+  flex: 1;
+  min-width: 280px;
+  text-align: center;
+}
+
+.profil-image img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Responsif untuk HP */
+@media (max-width: 768px) {
+  .profil-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profil-text, .profil-image {
+    width: 100%;
+  }
+
+  .profil-text h2 {
+    font-size: 1.6rem;
+  }
+}
+
+
+
+/* ===== GALERI DUSUN ===== */
+.galeri {
+  background-color: #fff;
+  padding: 80px 10%;
+  text-align: center;
+  color: #333;
+}
+
+.galeri h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.galeri .subtext {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.08);
+}
+
+.caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 12px;
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s ease;
+}
+
+.gallery-item:hover .caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .galeri {
+    padding: 60px 5%;
+  }
+
+  .galeri h2 {
+    font-size: 1.6rem;
+  }
+
+  .caption {
+    font-size: 0.9rem;
+  }
+}
+
+
+
+
+/* ===== SEJARAH SINGKAT ===== */
+.sejarah-section {
+  background: #fff;
+  padding: 80px 10%;
+  color: #333;
+}
+
+.sejarah-section h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 60px;
+  color: #333;
+}
+
+.sejarah-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 80px;
+  flex-wrap: wrap;
+}
+
+.sejarah-text {
+  flex: 1;
+  min-width: 280px;
+}
+
+.sejarah-text h3 {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.sejarah-text p {
+  line-height: 1.7;
+  color: #555;
+}
+
+.sejarah-img {
+  flex: 1;
+  text-align: center;
+}
+
+.sejarah-img img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .sejarah-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sejarah-text, .sejarah-img {
+    flex: 1 1 100%;
+  }
+}
+
+/* ===== DISCLAIMER ===== */
+.disclaimer {
+  background: #f9f9f9;
+  border-left: 4px solid #ff9800;
+  padding: 15px 20px;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.disclaimer p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+
+
+
+/* jelajah3.html*/
+/* ===== BUDAYA & HUTAN ===== */
+.budaya, .hutan {
+  padding: 80px 10%;
+  background: #fff;
+}
+
+.budaya h2, .hutan h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.budaya-content, .hutan-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.budaya-text, .hutan-text {
+  flex: 1 1 50%;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+.budaya-image, .hutan-image {
+  flex: 1 1 40%;
+  text-align: center;
+}
+
+.budaya-image img, .hutan-image img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+  object-fit: cover;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .budaya-content, .hutan-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+
+/*jelajah4.html*/
+/* ===== HUTAN DETAIL ===== */
+.hutan-map, .hutan-flora-fauna, .hutan-adat, .hutan-galeri, .hutan-pesan {
+  margin-top: 60px;
+}
+
+.hutan h3 {
+  color: #6AB04C;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.hutan-flora-fauna .cards {
+  justify-content: center;
+}
+
+.hutan-pesan p {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+
+/*kontak.html*/
+.kontak {
+  padding: 60px 20px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.kontak h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.kontak p {
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.contact-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-form {
+  flex: 1;
+  min-width: 300px;
+  text-align: left;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Poppins', sans-serif;
+}
+
+.contact-form button {
+  background: #4a8b5c;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:  0.3s ease;
+}
+
+.contact-form button:hover {
+  background: #3b734a;
+}
+
+/* Kontak langsung */
+.contact-links {
+  flex: 1;
+  min-width: 250px;
+  text-align: left;
+}
+
+.contact-links h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.contact-links a {
+  display: inline-block;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: white;
+  background: #4a8b5c;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition:  0.3s;
+}
+
+.contact-links a:hover {
+  background: #3b734a;
+}
+
+
+
+/*profil.html*/
+
+.map-container.mini {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.map-container.mini iframe {
+  width: 70%;
+  height: 220px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+
+
+.profil-section {
+  text-align: center;
+  padding: 80px 10%;
+  background: #F2F9F1;
+}
+
+.profil-section h1 {
+  color: #6AB04C;
+  font-size: 2.4rem;
+  margin-bottom: 20px;
+}
+
+.profil-content {
+  padding: 70px 10%;
+  background: #fff;
+}
+
+.profil-content h2 {
+  color: #6AB04C;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.content-flex {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.content-flex .text {
+  flex: 1;
+}
+
+.content-flex .image {
+  flex: 1;
+  text-align: center;
+}
+
+.content-flex img {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.struktur ul {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+}
+
+.struktur li {
+  margin: 8px 0;
+}
+
+@media (max-width: 768px) {
+  .content-flex {
+    flex-direction: column;
+  }
+}
+
+.struktur-adat {
+  text-align: center;
+  padding: 60px 10%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin-top: 50px;
+}
+
+.struktur-adat h2 {
+  color: #6AB04C;
+  margin-bottom: 25px;
+}
+
+.struktur-adat p {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.struktur-adat strong {
+  color: #000;
+}
+
+.struktur-adat .garis {
+  width: 80px;
+  height: 3px;
+  background: #6AB04C;
+  margin: 25px auto;
+  border-radius: 5px;
+}
+
+.struktur-adat h3 {
+  color: #3A86FF;
+  margin-bottom: 15px;
+}
+
+
+/*================*/
+/* ==== Dropdown Menu ==== */
+/* ==== Dropdown Menu ==== */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.arrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.dropdown:hover .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  background-color: #ffffff;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 10;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  color: #2C2C2C;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #F2F9F1;
+  color: #6AB04C;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* ==== Dropdown di HP ==== */
+@media (max-width: 768px) {
+  .dropdown-content {
+    position: static;
+    background-color: #6AB04C;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    text-align: left;
+  }
+
+  .dropdown-content a {
+    color: white;
+    padding-left: 25px;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #5C9441;
+  }
+
+  /* Saat diklik, dropdown terbuka */
+  .dropdown.open .dropdown-content {
+    display: block;
+  }
+
+  /* Arrow ikut berputar saat open */
+  .dropdown.open .arrow {
+    transform: rotate(180deg);
+  }
+}
+
