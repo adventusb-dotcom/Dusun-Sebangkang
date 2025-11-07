@@ -1,64 +1,94 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ===== SEO Metadata ===== -->
-  <title>Tentang Kami | Bisnis Keluarga Sawit</title>
-  <meta name="description" content="Pelajari kisah dan misi Bisnis Keluarga Sawit di Dusun Sebangkang, Desa Laja Sandang, Kecamatan Empanang. Kami berkomitmen untuk membangun ekonomi keluarga dan masyarakat melalui pengelolaan sawit berkelanjutan.">
-  <meta name="keywords" content="bisnis keluarga, sawit, desa laja sandang, empanang, usaha sawit, pertanian berkelanjutan, petani lokal">
-  <meta name="author" content="Adventus Boy">
-
-  <!-- ===== Open Graph (untuk media sosial) ===== -->
-  <meta property="og:title" content="Tentang Kami | Bisnis Keluarga Sawit">
-  <meta property="og:description" content="Kenali visi dan misi Bisnis Keluarga Sawit kami yang berfokus pada kesejahteraan keluarga dan masyarakat sekitar.">
-  <meta property="og:image" content="https://yourgithubusername.github.io/namaprojekmu/assets/preview.jpg"> <!-- ganti sesuai path gambar -->
-  <meta property="og:url" content="https://yourgithubusername.github.io/namaprojekmu/tentang.html">
-  <meta property="og:type" content="website">
-
-  <!-- ===== Twitter Card ===== -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Tentang Kami | Bisnis Keluarga Sawit">
-  <meta name="twitter:description" content="Membangun masa depan pertanian sawit yang berkelanjutan bersama keluarga dan masyarakat.">
-  <meta name="twitter:image" content="https://yourgithubusername.github.io/namaprojekmu/assets/preview.jpg">
-
-  <!-- ===== Favicon ===== -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profil Marianus Sudin</title>
-  <link rel="stylesheet" href="profil.css">
+  <title>Dusun Sebangkang</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<body>
-  <div class="stars" id="stars"></div>
 
+  <!-- ===== NAVBAR ===== -->
+ <header>
+  <div class="logo">Desa Sebangkang</div>
+  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
 
-  
-  <nav class="navbar">
-    <div class="logo">🌴 Bisnis Keluarga</div>
-    <button class="menu-toggle" id="menu-toggle">&#9776;</button>
-    <ul class="nav-links" id="nav-links">
-      <li><a href="index.html">Profil</a></li>
-      <span></span>
-      <li><a href="Riwayat.html">Riwayat</a></li>
-      <span></span>
-      <li><a href="tentang.html">Tentang Kami</a></li>
-      <span></span>
-      <li><a href="kontak.html">Kontak</a></li>
-    </ul>
+  <nav id="nav-menu">
+    <a href="index.html">Beranda</a>
+    <a href="profil.html">Profil</a>
+
+    <div class="dropdown">
+      <button class="dropbtn">
+        Menu <span class="arrow">&#9662;</span>
+      </button>
+      <div class="dropdown-content">
+        <a href="jelajah.html">Tentang Kami</a>
+        <a href="jelajah2.html">Sejarah</a>
+        <a href="jelajah3.html">Cultur</a>
+        <a href="jelajah4.html">Hutan Adat</a>
+      </div>
+    </div>
+
+    <a href="kontak.html">Kontak</a>
   </nav>
+</header>
 
-  <main class="profile-card">
-    <img src="marianus.png" alt="Foto Marianus Sudin" class="profile-pic">
-    <h1>Marianus Sudin</h1>
-    <h2>Petani Sawit</h2>
-    <p>
-      Sawit dari Bapak Marianus Sudin ini dikelola sendiri oleh keluarga melalui sistem bisnis digital hasil panen.
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Selamat Datang di Dusun Sebangkang</h1>
+      <p>Menjaga Alam, Melestarikan Tradisi, Menuju Desa Mandiri</p>
+      <a href="jelajah.html" class="btn-primary">Jelajahi Dusun</a>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT SECTION ===== -->
+  <section class="about reveal">
+    <div class="about-content">
+      <div class="text">
+        <h2>Tentang Dusun Sebangkang</h2>
+        <p>Dusun Sebangkang merupakan dusun yang asri dengan masyarakat yang menjunjung tinggi gotong royong. Terletak di kawasan subur dengan keindahan alam yang menawan, dusun ini menyimpan banyak potensi dalam bidang pertanian, wisata, dan UMKM lokal.</p>
+      </div>
+      <div class="image">
+        <img src="about.jpeg" alt="Tentang Dusun Sebangkang">
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POTENSI SECTION ===== -->
+  <section class="potensi reveal">
+    <h2>Potensi Unggulan</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>🌾 Pertanian</h3>
+        <p>Hasil bumi melimpah seperti padi, kelapa, dan sayuran segar yang menjadi sumber penghidupan utama warga.</p>
+      </div>
+      <div class="card">
+        <h3>🏞️ Wisata Alam</h3>
+        <p>Pemandangan alam yang menakjubkan dengan sungai dan bukit hijau cocok untuk wisata ekowisata.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALERI SECTION ===== -->
+  <section class="galeri reveal">
+    <h2>Galeri Kegiatan</h2>
+    <div class="gallery-grid">
+      <img src="kegiatan dusun.jpg" alt="Kegiatan Dusun">
+      <img src="Gawai dayak.jpg" alt="Gawai Dayak">
+      <img src="about.jpeg" alt="Gotong Royong">
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p><strong>Alamat:</strong> Dusun Sebangkang, Kecamatan Empanang, Kabupaten Kapuas Hulu</p>
+    <p>© 2025 Dusun Sebangkang | Disusun oleh : Adventus 
+      <a href="#">Facebook</a> · 
+      <a href="#">Instagram</a>
     </p>
-    <footer class="footer">© 2025 Disusun oleh Adventus</footer>
-  </main>
+  </footer>
 
   <script src="script.js"></script>
 </body>
