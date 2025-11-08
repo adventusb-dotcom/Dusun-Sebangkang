@@ -69,14 +69,18 @@ function buatAvatar(nama) {
 }
 
 // ------------------- UI: menu / reveal / dropdown (tidak diubah) -------------------
-// Menu burger
-const menuToggle = document.getElementById('menu-toggle');
-const navMenu = document.getElementById('nav-menu');
-if (menuToggle && navMenu) {
-  menuToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('show');
-  });
-}
+// === Menu burger untuk HP ===
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menu-toggle");
+  const navMenu = document.getElementById("nav-menu");
+
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("show");
+    });
+  }
+});
+
 
 // Scroll reveal
 function revealOnScroll() {
@@ -413,3 +417,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 }); // end DOMContentLoaded
+
