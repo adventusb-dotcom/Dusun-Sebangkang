@@ -1,7 +1,20 @@
 // script.js (module) - Komentar realtime ke Firebase (root: "komentar")
 // Panggil di HTML: <script type="module" src="script.js"></script>
 
-// Inisialisasi Firebase (Compat)
+// script.js (module)
+
+// Import Firebase SDK yang dibutuhkan
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  onValue
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
+// Konfigurasi Firebase milikmu
 const firebaseConfig = {
   apiKey: "AIzaSyD6RAnjcCki0ti3CymbHFVtXudIFsFayP0",
   authDomain: "dusun-sebangkang.firebaseapp.com",
@@ -13,9 +26,31 @@ const firebaseConfig = {
   measurementId: "G-BTGZ13YV7N"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const rootRef = db.ref("komentar");
+// Inisialisasi Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getDatabase(app);
+
+console.log("✅ Firebase berhasil diinisialisasi!");
+
+// ------------------- Contoh Koneksi Database -------------------
+// Misal: menulis data contoh
+const testRef = ref(db, "test");
+set(testRef, { status: "Firebase terhubung!" });
+
+// Mendengarkan perubahan realtime
+onValue(testRef, (snapshot) => {
+  console.log("🔥 Data dari Firebase:", snapshot.val());
+});
+
+// ------------------- Navbar Toggle -------------------
+const menuToggle = document.getElementById("menu-toggle");
+const navMenu = document.getElementById("nav-menu");
+if (menuToggle && navMenu) {
+  menuToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("show");
+  });
+}
 
 
 // ------------------- Utility Functions -------------------
@@ -304,4 +339,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 }); // END DOMContentLoaded
+
 
