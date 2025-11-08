@@ -71,14 +71,32 @@ function buatAvatar(nama) {
 // ------------------- UI: menu / reveal / dropdown (tidak diubah) -------------------
 // === Menu burger untuk HP ===
 document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.getElementById("menu-toggle");
-  const navMenu = document.getElementById("nav-menu");
-
+  // --- MENU BURGER (mobile) ---
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
   if (menuToggle && navMenu) {
-    menuToggle.addEventListener("click", () => {
-      navMenu.classList.toggle("show");
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('show');
     });
   }
+
+  // --- DROPDOWN (jika ada .dropbtn di dalam nav) ---
+  document.querySelectorAll('.dropbtn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const dropdownContent = btn.nextElementSibling;
+      document.querySelectorAll('.dropdown-content').forEach(dc => {
+        if (dc !== dropdownContent) dc.classList.remove('show');
+      });
+      dropdownContent.classList.toggle('show');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+    }
+  });
 });
 
 
@@ -99,22 +117,7 @@ function revealOnScroll() {
 window.addEventListener('scroll', revealOnScroll);
 window.addEventListener('load', revealOnScroll);
 
-// Dropdown toggle
-document.querySelectorAll('.dropbtn').forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const dropdownContent = btn.nextElementSibling;
-    document.querySelectorAll('.dropdown-content').forEach(dc => {
-      if (dc !== dropdownContent) dc.classList.remove('show');
-    });
-    dropdownContent.classList.toggle('show');
-  });
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dropdown')) {
-    document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
-  }
-});
+
 
 // ------------------- Komentar Firebase (DOMContentLoaded) -------------------
 document.addEventListener("DOMContentLoaded", () => {
@@ -417,4 +420,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 }); // end DOMContentLoaded
+
 
