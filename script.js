@@ -70,52 +70,55 @@ function buatAvatar(nama) {
 
 // ------------------- UI: menu / reveal / dropdown (tidak diubah) -------------------
 // === Menu burger untuk HP ===
+// ------------------- MENU BURGER, DROPDOWN, SCROLL REVEAL -------------------
 document.addEventListener("DOMContentLoaded", () => {
-  // --- MENU BURGER (mobile) ---
-  const menuToggle = document.getElementById('menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
+  // ===== MENU BURGER =====
+  const menuToggle = document.getElementById("menu-toggle");
+  const navMenu = document.getElementById("nav-menu");
   if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('show');
+    menuToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("show");
     });
   }
 
-  // --- DROPDOWN (jika ada .dropbtn di dalam nav) ---
-  document.querySelectorAll('.dropbtn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
+  // ===== DROPDOWN MENU =====
+  document.querySelectorAll(".dropbtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
       const dropdownContent = btn.nextElementSibling;
-      document.querySelectorAll('.dropdown-content').forEach(dc => {
-        if (dc !== dropdownContent) dc.classList.remove('show');
+      document.querySelectorAll(".dropdown-content").forEach((dc) => {
+        if (dc !== dropdownContent) dc.classList.remove("show");
       });
-      dropdownContent.classList.toggle('show');
+      dropdownContent.classList.toggle("show");
     });
   });
 
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
+  // Tutup dropdown kalau klik di luar area
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".dropdown")) {
+      document
+        .querySelectorAll(".dropdown-content")
+        .forEach((dc) => dc.classList.remove("show"));
     }
   });
+
+  // ===== SCROLL REVEAL =====
+  function revealOnScroll() {
+    const reveals = document.querySelectorAll(".reveal");
+    const windowHeight = window.innerHeight;
+    reveals.forEach((el) => {
+      const revealTop = el.getBoundingClientRect().top;
+      const revealBottom = el.getBoundingClientRect().bottom;
+      if (revealTop < windowHeight - 100 && revealBottom > 0) {
+        el.classList.add("active");
+      } else {
+        el.classList.remove("active");
+      }
+    });
+  }
+  window.addEventListener("scroll", revealOnScroll);
+  window.addEventListener("load", revealOnScroll);
 });
-
-
-// Scroll reveal
-function revealOnScroll() {
-  const reveals = document.querySelectorAll('.reveal');
-  const windowHeight = window.innerHeight;
-  reveals.forEach((el) => {
-    const revealTop = el.getBoundingClientRect().top;
-    const revealBottom = el.getBoundingClientRect().bottom;
-    if (revealTop < windowHeight - 100 && revealBottom > 0) {
-      el.classList.add('active');
-    } else {
-      el.classList.remove('active');
-    }
-  });
-}
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('load', revealOnScroll);
 
 
 
@@ -420,5 +423,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 }); // end DOMContentLoaded
+
 
 
