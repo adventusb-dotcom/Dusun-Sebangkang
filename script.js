@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.setItem(userIdKey, userId);
 
   // ---- CRUD ----
+  // tetap pertahankan fungsi-fungsi lama untuk kompatibilitas
   async function tambahKomentarDB(nama, pesan) {
     const newRef = push(rootRef);
     const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
@@ -155,14 +156,34 @@ document.addEventListener("DOMContentLoaded", () => {
     return newRef.key;
   }
 
+  // --- tambahan: fungsi untuk push ke arbitrary path (untuk nested replies tak terbatas)
+  async function tambahBalasanPath(pathString, nama, pesan) {
+    // pathString contoh: "komentar/<id>/replies" atau "komentar/<id>/replies/<rid>/replies"
+    const targetRef = ref(db, pathString);
+    const newRef = push(targetRef);
+    const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
+    await set(newRef, data);
+    return newRef.key;
+  }
+
   async function editKomentarDB(id, pesanBaru, parentId = null) {
     const path = parentId ? `komentar/${parentId}/replies/${id}` : `komentar/${id}`;
     return update(ref(db, path), { pesan: pesanBaru });
   }
 
+  // tambahan: edit berdasarkan path penuh (untuk nested)
+  async function editKomentarPath(pathString, pesanBaru) {
+    return update(ref(db, pathString), { pesan: pesanBaru });
+  }
+
   async function hapusKomentarDB(id, parentId = null) {
     const path = parentId ? `komentar/${parentId}/replies/${id}` : `komentar/${id}`;
     return remove(ref(db, path));
+  }
+
+  // tambahan: hapus berdasarkan path penuh (untuk nested)
+  async function hapusKomentarPath(pathString) {
+    return remove(ref(db, pathString));
   }
 
   // ---- Render (rekursif) ----
@@ -202,15 +223,17 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // reply button
+    // NOTE: untuk nested support, kirimkan parentPath ke showReplyPopup
     wrapper.querySelector(".replyBtn").addEventListener("click", () => {
-      showReplyPopup(node.key || node.id, node.nama);
+      // parentPath untuk root comment: komentar/<id>
+      showReplyPopup(`komentar/${node.key || node.id}`, node.nama);
     });
 
-    // edit & hapus if owner
+    // edit & hapus if owner (root-level)
     const editBtn = wrapper.querySelector(".editBtn");
     if (editBtn) {
       editBtn.addEventListener("click", () => {
+        // dipanggil secara backward-compatible (id + null) - handler akan mendeteksi
         showEditPopup(node.key || node.id, null, node.pesan);
       });
     }
@@ -221,13 +244,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // replies
+    // replies (satu tingkat sebelumnya) — tetap baca, tapi kita juga akan render nested replies di renderReplyNode
     if (node.replies) {
       const repliesArr = Object.entries(node.replies)
         .map(([k,v]) => ({ key: k, ...v }))
         .sort((a,b) => (a.waktu||0) - (b.waktu||0));
       const balasanContainer = wrapper.querySelector(".balasan");
       repliesArr.forEach(reply => {
+        // parentId here is root node id; renderReplyNode will render nested replies recursively
         const replyEl = renderReplyNode(reply, 1, node.key || node.id);
         balasanContainer.appendChild(replyEl);
       });
@@ -237,13 +261,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return wrapper;
   }
 
-  function renderReplyNode(reply, level = 1, parentId) {
+  // renderReplyNode sekarang mendukung nested replies (rekursif)
+  function renderReplyNode(reply, level = 1, parentId, parentPath = null) {
+    // parentId = immediate parent node id (could be top-level comment id or reply's parent)
+    // parentPath can be provided when recursing; if not, we construct base path
     const wrapper = document.createElement("div");
     wrapper.className = "reply-item";
     wrapper.style.marginLeft = `${level * 30}px`;
 
     const waktuStr = reply.waktu ? new Date(reply.waktu).toLocaleString("id-ID") : "";
 
+    // tambahkan tombol Balas di setiap reply agar dapat nested
     wrapper.innerHTML = `
       ${buatAvatar(reply.nama)}
       <div style="flex:1">
@@ -251,21 +279,51 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${escapeHTML(reply.pesan)}</p>
         <small>${escapeHTML(waktuStr)}</small>
         <div class="komentar-actions">
+          <button class="replyBtn">💬 Balas</button>
           ${reply.userId === userId ? `<button class="editReplyBtn">✏️ Edit</button><button class="hapusReplyBtn">🗑️ Hapus</button>` : ""}
         </div>
+        <div class="balasan"></div>
       </div>
     `;
 
+    // determine base path to this reply:
+    // jika parentPath disediakan (saat rekursif), gunakan itu; jika tidak, parent path adalah "komentar/<parentId>/replies"
+    const thisBasePath = parentPath || `komentar/${parentId}/replies`;
+
+    // reply button untuk nested reply -> path: thisBasePath + `/${reply.key}`
+    const replyBtn = wrapper.querySelector(".replyBtn");
+    replyBtn.addEventListener("click", () => {
+      // full parent path where new replies should be pushed: komentar/<parentId>/replies/<reply.key>
+      const parentPathForThisReply = `${thisBasePath}/${reply.key}`;
+      showReplyPopup(parentPathForThisReply, reply.nama);
+    });
+
+    // edit & hapus untuk reply (kirim path penuh ke handler supaya bisa edit nested)
     const editReplyBtn = wrapper.querySelector(".editReplyBtn");
     if (editReplyBtn) {
       editReplyBtn.addEventListener("click", () => {
-        showEditPopup(reply.key, parentId, reply.pesan);
+        // Provide full path to this reply for edit: `${thisBasePath}/${reply.key}`
+        showEditPopup(`${thisBasePath}/${reply.key}`, null, reply.pesan);
       });
     }
     const hapusReplyBtn = wrapper.querySelector(".hapusReplyBtn");
     if (hapusReplyBtn) {
       hapusReplyBtn.addEventListener("click", () => {
-        showDeleteConfirm(reply.key, parentId);
+        showDeleteConfirm(`${thisBasePath}/${reply.key}`, null);
+      });
+    }
+
+    // Jika reply memiliki sub-replies, render secara rekursif
+    if (reply.replies) {
+      const repliesArr = Object.entries(reply.replies)
+        .map(([k,v]) => ({ key: k, ...v }))
+        .sort((a,b) => (a.waktu||0) - (b.waktu||0));
+      const balasanContainer = wrapper.querySelector(".balasan");
+      repliesArr.forEach(childReply => {
+        // pass parentPath sebagai `${thisBasePath}/${reply.key}/replies` agar deeper nesting tahu pathnya
+        const childParentPath = `${thisBasePath}/${reply.key}/replies`;
+        const childEl = renderReplyNode(childReply, level + 1, parentId, childParentPath);
+        balasanContainer.appendChild(childEl);
       });
     }
 
@@ -274,7 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ------------------- Popups -------------------
-  function showReplyPopup(parentId, parentNama) {
+  // showReplyPopup sekarang menerima parentPath (string) OR old-style parentId (number/string)
+  function showReplyPopup(parentPathOrId, parentNama) {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
@@ -299,7 +358,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const finalNama = replyNama || (namaEl && namaEl.value.trim()) || "Anonim";
       try {
-        await tambahBalasanDB(parentId, finalNama, text);
+        // Jika parentPathOrId berisi "komentar/" berarti ini adalah path penuh
+        if (typeof parentPathOrId === "string" && parentPathOrId.includes("komentar/")) {
+          // push ke `${parentPathOrId}/replies`
+          const targetPath = `${parentPathOrId}/replies`;
+          await tambahBalasanPath(targetPath, finalNama, text);
+        } else {
+          // old-style: parentId (root-level comment id)
+          await tambahBalasanDB(parentPathOrId, finalNama, text);
+        }
         showNotif("Balasan dikirim!");
         overlay.remove();
       } catch (err) {
@@ -311,7 +378,8 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.querySelector("#cancelReply").addEventListener("click", () => overlay.remove());
   }
 
-  function showEditPopup(itemId, parentId = null, oldPesan = "") {
+  // showEditPopup: supports either old signature (id, parentId) or full path string as first arg
+  function showEditPopup(itemIdOrPath, parentId = null, oldPesan = "") {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
@@ -333,7 +401,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       try {
-        await editKomentarDB(itemId, newText, parentId);
+        if (typeof itemIdOrPath === "string" && itemIdOrPath.includes("komentar/")) {
+          // full path
+          await editKomentarPath(itemIdOrPath, newText);
+        } else {
+          // old style id + parentId
+          await editKomentarDB(itemIdOrPath, newText, parentId);
+        }
         showNotif("Komentar berhasil diedit!");
         overlay.remove();
       } catch (err) {
@@ -345,7 +419,8 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.querySelector("#cancelEdit").addEventListener("click", () => overlay.remove());
   }
 
-  function showDeleteConfirm(itemId, parentId = null) {
+  // showDeleteConfirm: supports full path or (id, parentId)
+  function showDeleteConfirm(itemIdOrPath, parentId = null) {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
@@ -361,7 +436,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     overlay.querySelector("#confirmDelete").addEventListener("click", async () => {
       try {
-        await hapusKomentarDB(itemId, parentId);
+        if (typeof itemIdOrPath === "string" && itemIdOrPath.includes("komentar/")) {
+          await hapusKomentarPath(itemIdOrPath);
+        } else {
+          await hapusKomentarDB(itemIdOrPath, parentId);
+        }
         showNotif("Komentar dihapus!", "#e74c3c");
         overlay.remove();
       } catch (err) {
