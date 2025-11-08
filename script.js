@@ -1,19 +1,7 @@
 // script.js (module) - Komentar realtime ke Firebase (root: "komentar")
 // Panggil di HTML: <script type="module" src="script.js"></script>
 
-// ------------------- Firebase imports -------------------
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  push,
-  set,
-  onValue,
-  remove,
-  update
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
-
-// ------------------- Firebase config -------------------
+// Inisialisasi Firebase (Compat)
 const firebaseConfig = {
   apiKey: "AIzaSyD6RAnjcCki0ti3CymbHFVtXudIFsFayP0",
   authDomain: "dusun-sebangkang.firebaseapp.com",
@@ -25,9 +13,10 @@ const firebaseConfig = {
   measurementId: "G-BTGZ13YV7N"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const rootRef = ref(db, "komentar");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const rootRef = db.ref("komentar");
+
 
 // ------------------- Utility Functions -------------------
 function escapeHTML(str) {
@@ -315,3 +304,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 }); // END DOMContentLoaded
+
