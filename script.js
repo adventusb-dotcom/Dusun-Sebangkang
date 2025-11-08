@@ -1,9 +1,7 @@
 // script.js (module) - Komentar realtime ke Firebase (root: "komentar")
 // Panggil di HTML: <script type="module" src="script.js"></script>
 
-// script.js (module)
-
-// Import Firebase SDK yang dibutuhkan
+// ------------------- Firebase imports -------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
 import {
@@ -11,10 +9,13 @@ import {
   ref,
   push,
   set,
-  onValue
+  onValue,
+  update,
+  remove
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-// Konfigurasi Firebase milikmu
+// ------------------- Firebase config -------------------
+// Gunakan konfigurasi yang sudah ada (jangan duplikat di file lain)
 const firebaseConfig = {
   apiKey: "AIzaSyD6RAnjcCki0ti3CymbHFVtXudIFsFayP0",
   authDomain: "dusun-sebangkang.firebaseapp.com",
@@ -26,34 +27,13 @@ const firebaseConfig = {
   measurementId: "G-BTGZ13YV7N"
 };
 
-// Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getDatabase(app);
 
 console.log("✅ Firebase berhasil diinisialisasi!");
 
-// ------------------- Contoh Koneksi Database -------------------
-// Misal: menulis data contoh
-const testRef = ref(db, "test");
-set(testRef, { status: "Firebase terhubung!" });
-
-// Mendengarkan perubahan realtime
-onValue(testRef, (snapshot) => {
-  console.log("🔥 Data dari Firebase:", snapshot.val());
-});
-
-// ------------------- Navbar Toggle -------------------
-const menuToggle = document.getElementById("menu-toggle");
-const navMenu = document.getElementById("nav-menu");
-if (menuToggle && navMenu) {
-  menuToggle.addEventListener("click", () => {
-    navMenu.classList.toggle("show");
-  });
-}
-
-
-// ------------------- Utility Functions -------------------
+// ------------------- Utilities -------------------
 function escapeHTML(str) {
   if (str === undefined || str === null) return "";
   return String(str)
@@ -119,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Tutup dropdown kalau klik di luar area
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".dropdown") && !e.target.classList.contains("dropbtn")) {
-      document.querySelectorAll(".dropdown-content").forEach(dc => dc.classList.remove("show"));
+      document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
     }
   });
 
@@ -128,8 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const reveals = document.querySelectorAll(".reveal");
     const windowHeight = window.innerHeight;
     reveals.forEach((el) => {
-      const revealTop = el.getBoundingClientRect().top;
-      const revealBottom = el.getBoundingClientRect().bottom;
+      const rect = el.getBoundingClientRect();
+      const revealTop = rect.top;
+      const revealBottom = rect.bottom;
       if (revealTop < windowHeight - 100 && revealBottom > 0) {
         el.classList.add("active");
       } else {
@@ -140,21 +121,29 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", revealOnScroll);
   window.addEventListener("load", revealOnScroll);
 
-  // ======================== KOMENTAR FIREBASE ========================
+  // ------------------- KOMENTAR FIREBASE -------------------
   const namaEl = document.getElementById("nama");
   const pesanEl = document.getElementById("pesan");
   const kirimBtn = document.getElementById("kirimKomentar");
   const daftarKomentar = document.getElementById("daftarKomentar");
-  if (!daftarKomentar) return; // Jika tidak ada area komentar, keluar
 
+  // Jika elemen komentar tidak ada di halaman ini, hentikan bagian komentar (agar aman di halaman lain)
+  if (!daftarKomentar) return;
+
+  // root reference untuk komentar
+  const rootRef = ref(db, "komentar");
+
+  // simpan userId lokal untuk menandai pemilik komentar
   const userIdKey = "userId";
-  const userId = localStorage.getItem(userIdKey) || crypto.randomUUID();
+  const userId = localStorage.getItem(userIdKey) || (crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   localStorage.setItem(userIdKey, userId);
 
+  // ---- CRUD ----
   async function tambahKomentarDB(nama, pesan) {
     const newRef = push(rootRef);
     const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
     await set(newRef, data);
+    return newRef.key;
   }
 
   async function tambahBalasanDB(parentId, nama, pesan) {
@@ -163,22 +152,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const newRef = push(repliesRef);
     const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
     await set(newRef, data);
+    return newRef.key;
   }
 
   async function editKomentarDB(id, pesanBaru, parentId = null) {
-    const path = parentId
-      ? `komentar/${parentId}/replies/${id}`
-      : `komentar/${id}`;
+    const path = parentId ? `komentar/${parentId}/replies/${id}` : `komentar/${id}`;
     return update(ref(db, path), { pesan: pesanBaru });
   }
 
   async function hapusKomentarDB(id, parentId = null) {
-    const path = parentId
-      ? `komentar/${parentId}/replies/${id}`
-      : `komentar/${id}`;
+    const path = parentId ? `komentar/${parentId}/replies/${id}` : `komentar/${id}`;
     return remove(ref(db, path));
   }
 
+  // ---- Render (rekursif) ----
   function renderAll(snapshotVal) {
     daftarKomentar.innerHTML = "";
     if (!snapshotVal) {
@@ -188,14 +175,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const roots = Object.entries(snapshotVal)
       .map(([key, val]) => ({ key, ...val }))
       .sort((a,b) => (a.waktu || 0) - (b.waktu || 0));
-    roots.forEach(node => daftarKomentar.appendChild(renderNode(node, 0)));
+    roots.forEach(node => {
+      const el = renderNode(node, 0);
+      daftarKomentar.appendChild(el);
+    });
   }
 
   function renderNode(node, level = 0) {
     const wrapper = document.createElement("div");
     wrapper.className = "komentar-item";
     wrapper.style.marginLeft = `${level * 30}px`;
+
     const waktuStr = node.waktu ? new Date(node.waktu).toLocaleString("id-ID") : "";
+
     wrapper.innerHTML = `
       ${buatAvatar(node.nama)}
       <div class="komentar-body">
@@ -204,26 +196,41 @@ document.addEventListener("DOMContentLoaded", () => {
         <small>${escapeHTML(waktuStr)}</small>
         <div class="komentar-actions">
           <button class="replyBtn">💬 Balas</button>
-          ${node.userId === userId ? `
-            <button class="editBtn">✏️ Edit</button>
-            <button class="hapusBtn">🗑️ Hapus</button>` : ""}
+          ${node.userId === userId ? `<button class="editBtn">✏️ Edit</button><button class="hapusBtn">🗑️ Hapus</button>` : ""}
         </div>
         <div class="balasan"></div>
       </div>
     `;
 
-    wrapper.querySelector(".replyBtn").addEventListener("click", () => showReplyPopup(node.key, node.nama));
-    if (node.userId === userId) {
-      wrapper.querySelector(".editBtn").addEventListener("click", () => showEditPopup(node.key, null, node.pesan));
-      wrapper.querySelector(".hapusBtn").addEventListener("click", () => showDeleteConfirm(node.key, null));
+    // reply button
+    wrapper.querySelector(".replyBtn").addEventListener("click", () => {
+      showReplyPopup(node.key || node.id, node.nama);
+    });
+
+    // edit & hapus if owner
+    const editBtn = wrapper.querySelector(".editBtn");
+    if (editBtn) {
+      editBtn.addEventListener("click", () => {
+        showEditPopup(node.key || node.id, null, node.pesan);
+      });
+    }
+    const hapusBtn = wrapper.querySelector(".hapusBtn");
+    if (hapusBtn) {
+      hapusBtn.addEventListener("click", () => {
+        showDeleteConfirm(node.key || node.id, null);
+      });
     }
 
+    // replies
     if (node.replies) {
       const repliesArr = Object.entries(node.replies)
-        .map(([k,v]) => ({ key:k, ...v }))
+        .map(([k,v]) => ({ key: k, ...v }))
         .sort((a,b) => (a.waktu||0) - (b.waktu||0));
       const balasanContainer = wrapper.querySelector(".balasan");
-      repliesArr.forEach(reply => balasanContainer.appendChild(renderReplyNode(reply, 1, node.key)));
+      repliesArr.forEach(reply => {
+        const replyEl = renderReplyNode(reply, 1, node.key || node.id);
+        balasanContainer.appendChild(replyEl);
+      });
     }
 
     setTimeout(() => wrapper.classList.add("show"), 80);
@@ -234,7 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const wrapper = document.createElement("div");
     wrapper.className = "reply-item";
     wrapper.style.marginLeft = `${level * 30}px`;
+
     const waktuStr = reply.waktu ? new Date(reply.waktu).toLocaleString("id-ID") : "";
+
     wrapper.innerHTML = `
       ${buatAvatar(reply.nama)}
       <div style="flex:1">
@@ -242,102 +251,153 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${escapeHTML(reply.pesan)}</p>
         <small>${escapeHTML(waktuStr)}</small>
         <div class="komentar-actions">
-          ${reply.userId === userId ? `
-            <button class="editReplyBtn">✏️ Edit</button>
-            <button class="hapusReplyBtn">🗑️ Hapus</button>` : ""}
+          ${reply.userId === userId ? `<button class="editReplyBtn">✏️ Edit</button><button class="hapusReplyBtn">🗑️ Hapus</button>` : ""}
         </div>
       </div>
     `;
-    if (reply.userId === userId) {
-      wrapper.querySelector(".editReplyBtn").addEventListener("click", () => showEditPopup(reply.key, parentId, reply.pesan));
-      wrapper.querySelector(".hapusReplyBtn").addEventListener("click", () => showDeleteConfirm(reply.key, parentId));
+
+    const editReplyBtn = wrapper.querySelector(".editReplyBtn");
+    if (editReplyBtn) {
+      editReplyBtn.addEventListener("click", () => {
+        showEditPopup(reply.key, parentId, reply.pesan);
+      });
     }
+    const hapusReplyBtn = wrapper.querySelector(".hapusReplyBtn");
+    if (hapusReplyBtn) {
+      hapusReplyBtn.addEventListener("click", () => {
+        showDeleteConfirm(reply.key, parentId);
+      });
+    }
+
     setTimeout(() => wrapper.classList.add("show"), 80);
     return wrapper;
   }
 
-  // =================== POPUP ===================
+  // ------------------- Popups -------------------
   function showReplyPopup(parentId, parentNama) {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
       <div class="popup-box">
         <h3>Balas Komentar dari <b>${escapeHTML(parentNama)}</b></h3>
-        <input id="replyNama" type="text" placeholder="Nama Anda (opsional)">
-        <textarea id="replyText" placeholder="Tulis balasan..."></textarea>
-        <div class="popup-buttons">
+        <input id="replyNama" type="text" placeholder="Masukkan nama Anda (opsional)" style="width:100%;padding:8px;margin-bottom:10px;border:1px solid #ccc;border-radius:6px;">
+        <textarea id="replyText" placeholder="Tulis balasan..." style="width:100%;height:100px;border-radius:6px;border:1px solid #ccc;padding:10px;"></textarea>
+        <div class="popup-buttons" style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
           <button id="sendReply">Kirim</button>
           <button id="cancelReply">Batal</button>
         </div>
-      </div>`;
+      </div>
+    `;
     document.body.appendChild(overlay);
+
     overlay.querySelector("#sendReply").addEventListener("click", async () => {
       const replyNama = overlay.querySelector("#replyNama").value.trim();
       const text = overlay.querySelector("#replyText").value.trim();
-      if (!text) return showNotif("Isi balasan dulu!", "#e67e22");
+      if (!text) {
+        showNotif("Isi balasan dulu!", "#e67e22");
+        return;
+      }
       const finalNama = replyNama || (namaEl && namaEl.value.trim()) || "Anonim";
-      try { await tambahBalasanDB(parentId, finalNama, text); showNotif("Balasan dikirim!"); overlay.remove(); }
-      catch { showNotif("Gagal kirim balasan", "#e74c3c"); }
+      try {
+        await tambahBalasanDB(parentId, finalNama, text);
+        showNotif("Balasan dikirim!");
+        overlay.remove();
+      } catch (err) {
+        console.error(err);
+        showNotif("Gagal kirim balasan", "#e74c3c");
+      }
     });
+
     overlay.querySelector("#cancelReply").addEventListener("click", () => overlay.remove());
   }
 
-  function showEditPopup(itemId, parentId, oldPesan) {
+  function showEditPopup(itemId, parentId = null, oldPesan = "") {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
       <div class="popup-box">
         <h3>Edit Komentar</h3>
-        <textarea id="editText">${escapeHTML(oldPesan)}</textarea>
-        <div class="popup-buttons">
+        <textarea id="editText" style="width:100%;height:120px;border-radius:6px;border:1px solid #ccc;padding:10px;">${escapeHTML(oldPesan)}</textarea>
+        <div class="popup-buttons" style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
           <button id="saveEdit">Simpan</button>
           <button id="cancelEdit">Batal</button>
         </div>
-      </div>`;
+      </div>
+    `;
     document.body.appendChild(overlay);
+
     overlay.querySelector("#saveEdit").addEventListener("click", async () => {
       const newText = overlay.querySelector("#editText").value.trim();
-      if (!newText) return showNotif("Isi komentar baru!", "#e67e22");
-      try { await editKomentarDB(itemId, newText, parentId); showNotif("Komentar diedit!"); overlay.remove(); }
-      catch { showNotif("Gagal edit komentar", "#e74c3c"); }
+      if (!newText) {
+        showNotif("Isi komentar baru!", "#e67e22");
+        return;
+      }
+      try {
+        await editKomentarDB(itemId, newText, parentId);
+        showNotif("Komentar berhasil diedit!");
+        overlay.remove();
+      } catch (err) {
+        console.error(err);
+        showNotif("Gagal edit komentar", "#e74c3c");
+      }
     });
+
     overlay.querySelector("#cancelEdit").addEventListener("click", () => overlay.remove());
   }
 
-  function showDeleteConfirm(itemId, parentId) {
+  function showDeleteConfirm(itemId, parentId = null) {
     const overlay = document.createElement("div");
     overlay.className = "popup-overlay";
     overlay.innerHTML = `
       <div class="popup-box">
         <h3>Hapus komentar ini?</h3>
-        <div class="popup-buttons">
+        <div class="popup-buttons" style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">
           <button id="confirmDelete">Hapus</button>
           <button id="cancelDelete">Batal</button>
         </div>
-      </div>`;
+      </div>
+    `;
     document.body.appendChild(overlay);
+
     overlay.querySelector("#confirmDelete").addEventListener("click", async () => {
-      try { await hapusKomentarDB(itemId, parentId); showNotif("Komentar dihapus!", "#e74c3c"); overlay.remove(); }
-      catch { showNotif("Gagal hapus komentar", "#e74c3c"); }
+      try {
+        await hapusKomentarDB(itemId, parentId);
+        showNotif("Komentar dihapus!", "#e74c3c");
+        overlay.remove();
+      } catch (err) {
+        console.error(err);
+        showNotif("Gagal hapus komentar", "#e74c3c");
+      }
     });
+
     overlay.querySelector("#cancelDelete").addEventListener("click", () => overlay.remove());
   }
 
-  // =================== REALTIME FIREBASE LISTENER ===================
-  onValue(rootRef, (snapshot) => renderAll(snapshot.val()), (err) => console.error(err));
-
-  // =================== KIRIM KOMENTAR BARU ===================
-  kirimBtn?.addEventListener("click", async () => {
-    const namaVal = namaEl.value.trim();
-    const pesanVal = pesanEl.value.trim();
-    if (!namaVal || !pesanVal) return showNotif("Isi semua kolom!", "#e67e22");
-    try {
-      await tambahKomentarDB(namaVal, pesanVal);
-      namaEl.value = ""; pesanEl.value = "";
-      showNotif("Komentar dikirim!");
-    } catch { showNotif("Gagal kirim komentar", "#e74c3c"); }
+  // ------------------- Realtime listener -------------------
+  onValue(rootRef, (snapshot) => {
+    const val = snapshot.val();
+    renderAll(val);
+  }, (err) => {
+    console.error("Firebase read error:", err);
   });
 
-}); // END DOMContentLoaded
+  // ------------------- Submit main comment -------------------
+  kirimBtn.addEventListener("click", async () => {
+    const namaVal = namaEl.value.trim();
+    const pesanVal = pesanEl.value.trim();
+    if (!namaVal || !pesanVal) {
+      showNotif("Isi semua kolom!", "#e67e22");
+      return;
+    }
+    try {
+      await tambahKomentarDB(namaVal, pesanVal);
+      namaEl.value = "";
+      pesanEl.value = "";
+      showNotif("Komentar berhasil dikirim!");
+    } catch (err) {
+      console.error(err);
+      showNotif("Gagal kirim komentar", "#e74c3c");
+    }
+  });
 
-
+}); // end DOMContentLoaded
