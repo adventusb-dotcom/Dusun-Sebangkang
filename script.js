@@ -1,7 +1,4 @@
-// script.js (module) - Komentar realtime ke Firebase (root: "komentar")
-// Panggil di HTML: <script type="module" src="script.js"></script>
-
-// ------------------- Firebase imports -------------------
+//Firebase imports 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
 import {
@@ -14,8 +11,7 @@ import {
   remove
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-// ------------------- Firebase config -------------------
-// Gunakan konfigurasi yang sudah ada (jangan duplikat di file lain)
+//kode konfig
 const firebaseConfig = {
   apiKey: "AIzaSyD6RAnjcCki0ti3CymbHFVtXudIFsFayP0",
   authDomain: "dusun-sebangkang.firebaseapp.com",
@@ -33,7 +29,7 @@ const db = getDatabase(app);
 
 console.log("✅ Firebase berhasil diinisialisasi!");
 
-// ------------------- Utilities -------------------
+
 function escapeHTML(str) {
   if (str === undefined || str === null) return "";
   return String(str)
@@ -63,19 +59,17 @@ function buatAvatar(nama) {
     A:"#FF6B6B",B:"#FF8E53",C:"#FFD93D",D:"#6BCB77",E:"#4D96FF",
     F:"#845EC2",G:"#D65DB1",H:"#FF9671",I:"#FFC75F",J:"#F9F871",
     K:"#00C9A7",L:"#845EC2",M:"#FF8066",N:"#00B8A9",O:"#F76C6C",
-    P:"#F9ED69",Q:"#C34A36",R:"#3E8E7E",S:"#6A0572",T:"#F5A962",
+    P:"#bb367fff",Q:"#C34A36",R:"#3E8E7E",S:"#6A0572",T:"#F5A962",
     U:"#00909E",V:"#E40017",W:"#3AB0FF",X:"#FC5404",Y:"#A23B72",Z:"#2EC1AC"
   };
   const warna = warnaHuruf[huruf] || "#6AB04C";
   return `<div class="komentar-avatar" style="background:${warna}">${escapeHTML(huruf)}</div>`;
 }
 
-// ============================================================================
-// ========================  MAIN DOM READY CODE  =============================
-// ============================================================================
+//menu garis 3 di layar hp
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ===== MENU BURGER (Mobile Navigation) =====
+  //MENU BURGER "Hp"
   const menuToggle = document.getElementById("menu-toggle");
   const navMenu = document.getElementById("nav-menu");
   if (menuToggle && navMenu) {
@@ -84,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== DROPDOWN MENU =====
+  //DROPDOWN MENU
   document.querySelectorAll(".dropbtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -96,14 +90,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Tutup dropdown kalau klik di luar area
+  //Tutup dropdown
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".dropdown") && !e.target.classList.contains("dropbtn")) {
       document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
     }
   });
 
-  // ===== SCROLL REVEAL ANIMATION =====
+  //Animasi Foto
   function revealOnScroll() {
     const reveals = document.querySelectorAll(".reveal");
     const windowHeight = window.innerHeight;
@@ -121,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", revealOnScroll);
   window.addEventListener("load", revealOnScroll);
 
-  // ------------------- KOMENTAR FIREBASE -------------------
+  //Komentar firebase
   const namaEl = document.getElementById("nama");
   const pesanEl = document.getElementById("pesan");
   const kirimBtn = document.getElementById("kirimKomentar");
@@ -138,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem(userIdKey) || (crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   localStorage.setItem(userIdKey, userId);
 
-  // ---- CRUD ----
+  
   // tetap pertahankan fungsi-fungsi lama untuk kompatibilitas
   async function tambahKomentarDB(nama, pesan) {
     const newRef = push(rootRef);
@@ -479,4 +473,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-}); // end DOMContentLoaded
+}); 
