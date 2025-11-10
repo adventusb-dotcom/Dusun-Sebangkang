@@ -29,7 +29,6 @@ const db = getDatabase(app);
 
 console.log("✅ Firebase berhasil diinisialisasi!");
 
-
 function escapeHTML(str) {
   if (str === undefined || str === null) return "";
   return String(str)
@@ -132,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem(userIdKey) || (crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   localStorage.setItem(userIdKey, userId);
 
-  
   // tetap pertahankan fungsi-fungsi lama untuk kompatibilitas
   async function tambahKomentarDB(nama, pesan) {
     const newRef = push(rootRef);
@@ -141,21 +139,23 @@ document.addEventListener("DOMContentLoaded", () => {
     return newRef.key;
   }
 
-  async function tambahBalasanDB(parentId, nama, pesan) {
+  // parentId = id komentar root; replyToName = nama yang dibalas (string)
+  async function tambahBalasanDB(parentId, nama, pesan, replyToName = null) {
     if (!parentId) return;
     const repliesRef = ref(db, `komentar/${parentId}/replies`);
     const newRef = push(repliesRef);
     const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
+    if (replyToName) data.replyToName = replyToName;
     await set(newRef, data);
     return newRef.key;
   }
 
-  // --- tambahan: fungsi untuk push ke arbitrary path (untuk nested replies tak terbatas)
-  async function tambahBalasanPath(pathString, nama, pesan) {
-    // pathString contoh: "komentar/<id>/replies" atau "komentar/<id>/replies/<rid>/replies"
+  // pathString contoh: "komentar/<id>/replies" atau "komentar/<id>/replies/<rid>/replies"
+  async function tambahBalasanPath(pathString, nama, pesan, replyToName = null) {
     const targetRef = ref(db, pathString);
     const newRef = push(targetRef);
     const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
+    if (replyToName) data.replyToName = replyToName;
     await set(newRef, data);
     return newRef.key;
   }
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderNode(node, level = 0) {
     const wrapper = document.createElement("div");
     wrapper.className = "komentar-item";
-    wrapper.style.marginLeft = `${level * 30}px`;
+    wrapper.style.marginLeft = `${level * 0}px`; // top-level keep left (we handle replies with .replies)
 
     const waktuStr = node.waktu ? new Date(node.waktu).toLocaleString("id-ID") : "";
 
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // NOTE: untuk nested support, kirimkan parentPath ke showReplyPopup
+    // reply to this root comment
     wrapper.querySelector(".replyBtn").addEventListener("click", () => {
       // parentPath untuk root comment: komentar/<id>
       showReplyPopup(`komentar/${node.key || node.id}`, node.nama);
@@ -227,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const editBtn = wrapper.querySelector(".editBtn");
     if (editBtn) {
       editBtn.addEventListener("click", () => {
-        // dipanggil secara backward-compatible (id + null) - handler akan mendeteksi
         showEditPopup(node.key || node.id, null, node.pesan);
       });
     }
@@ -238,41 +237,44 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // replies (satu tingkat sebelumnya) — tetap baca, tapi kita juga akan render nested replies di renderReplyNode
+    // replies (render nested recursively)
     if (node.replies) {
       const repliesArr = Object.entries(node.replies)
         .map(([k,v]) => ({ key: k, ...v }))
         .sort((a,b) => (a.waktu||0) - (b.waktu||0));
       const balasanContainer = wrapper.querySelector(".balasan");
+      // use a .replies wrapper to get consistent styling
+      const repliesWrapper = document.createElement("div");
+      repliesWrapper.className = "replies";
       repliesArr.forEach(reply => {
-        // parentId here is root node id; renderReplyNode will render nested replies recursively
         const replyEl = renderReplyNode(reply, 1, node.key || node.id);
-        balasanContainer.appendChild(replyEl);
+        repliesWrapper.appendChild(replyEl);
       });
+      balasanContainer.appendChild(repliesWrapper);
     }
 
     setTimeout(() => wrapper.classList.add("show"), 80);
     return wrapper;
   }
 
-  // renderReplyNode sekarang mendukung nested replies (rekursif)
+  // renderReplyNode supports nested replies; parentId = top-level root id for forming base path if needed
   function renderReplyNode(reply, level = 1, parentId, parentPath = null) {
-    // parentId = immediate parent node id (could be top-level comment id or reply's parent)
-    // parentPath can be provided when recursing; if not, we construct base path
     const wrapper = document.createElement("div");
     wrapper.className = "reply-item";
-    wrapper.style.marginLeft = `${level * 30}px`;
+    // we use CSS .replies to indent, so don't set marginLeft here to avoid compounding
 
     const waktuStr = reply.waktu ? new Date(reply.waktu).toLocaleString("id-ID") : "";
 
-    // tambahkan tombol Balas di setiap reply agar dapat nested
+    // If reply.replyToName exists, show "X membalas komentar Y"
+    const replyToLine = reply.replyToName ? `<div class="reply-to-line"><small><strong>${escapeHTML(reply.nama)}</strong> membalas komentar <strong>${escapeHTML(reply.replyToName)}</strong></small></div>` : `<strong>${escapeHTML(reply.nama)}</strong>`;
+
     wrapper.innerHTML = `
       ${buatAvatar(reply.nama)}
-      <div style="flex:1">
-        <strong>${escapeHTML(reply.nama)}</strong>
-        <p>${escapeHTML(reply.pesan)}</p>
-        <small>${escapeHTML(waktuStr)}</small>
-        <div class="komentar-actions">
+      <div style="flex:1; min-width:0;">
+        ${replyToLine}
+        <p style="margin:6px 0 6px 0;">${escapeHTML(reply.pesan)}</p>
+        <small style="color:#777;font-size:0.82rem;">${escapeHTML(waktuStr)}</small>
+        <div class="komentar-actions" style="margin-top:6px;">
           <button class="replyBtn">💬 Balas</button>
           ${reply.userId === userId ? `<button class="editReplyBtn">✏️ Edit</button><button class="hapusReplyBtn">🗑️ Hapus</button>` : ""}
         </div>
@@ -280,23 +282,21 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // determine base path to this reply:
-    // jika parentPath disediakan (saat rekursif), gunakan itu; jika tidak, parent path adalah "komentar/<parentId>/replies"
+    // determine base path to this reply node
     const thisBasePath = parentPath || `komentar/${parentId}/replies`;
 
-    // reply button untuk nested reply -> path: thisBasePath + `/${reply.key}`
+    // reply button for nested reply -> path: thisBasePath + `/${reply.key}`
     const replyBtn = wrapper.querySelector(".replyBtn");
     replyBtn.addEventListener("click", () => {
-      // full parent path where new replies should be pushed: komentar/<parentId>/replies/<reply.key>
       const parentPathForThisReply = `${thisBasePath}/${reply.key}`;
+      // pass parentNama as the person being replied to (reply.nama)
       showReplyPopup(parentPathForThisReply, reply.nama);
     });
 
-    // edit & hapus untuk reply (kirim path penuh ke handler supaya bisa edit nested)
+    // edit & hapus for reply
     const editReplyBtn = wrapper.querySelector(".editReplyBtn");
     if (editReplyBtn) {
       editReplyBtn.addEventListener("click", () => {
-        // Provide full path to this reply for edit: `${thisBasePath}/${reply.key}`
         showEditPopup(`${thisBasePath}/${reply.key}`, null, reply.pesan);
       });
     }
@@ -307,18 +307,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Jika reply memiliki sub-replies, render secara rekursif
+    // render deeper nested replies (rekursif)
     if (reply.replies) {
       const repliesArr = Object.entries(reply.replies)
         .map(([k,v]) => ({ key: k, ...v }))
         .sort((a,b) => (a.waktu||0) - (b.waktu||0));
       const balasanContainer = wrapper.querySelector(".balasan");
+      const innerRepliesWrapper = document.createElement("div");
+      innerRepliesWrapper.className = "replies";
       repliesArr.forEach(childReply => {
-        // pass parentPath sebagai `${thisBasePath}/${reply.key}/replies` agar deeper nesting tahu pathnya
         const childParentPath = `${thisBasePath}/${reply.key}/replies`;
         const childEl = renderReplyNode(childReply, level + 1, parentId, childParentPath);
-        balasanContainer.appendChild(childEl);
+        innerRepliesWrapper.appendChild(childEl);
       });
+      balasanContainer.appendChild(innerRepliesWrapper);
     }
 
     setTimeout(() => wrapper.classList.add("show"), 80);
@@ -356,10 +358,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (typeof parentPathOrId === "string" && parentPathOrId.includes("komentar/")) {
           // push ke `${parentPathOrId}/replies`
           const targetPath = `${parentPathOrId}/replies`;
-          await tambahBalasanPath(targetPath, finalNama, text);
+          // pass parentNama sebagai replyToName agar tersimpan di DB
+          await tambahBalasanPath(targetPath, finalNama, text, parentNama);
         } else {
           // old-style: parentId (root-level comment id)
-          await tambahBalasanDB(parentPathOrId, finalNama, text);
+          await tambahBalasanDB(parentPathOrId, finalNama, text, parentNama);
         }
         showNotif("Balasan dikirim!");
         overlay.remove();
@@ -473,4 +476,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-}); 
+});
