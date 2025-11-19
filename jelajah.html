@@ -33,6 +33,25 @@
 
     <a href="kontak.html">Kontak</a>
   </nav>
+
+   <!-- Ikon Notifikasi -->
+     <!-- 🔔 Ikon Notifikasi -->
+<div id="notifIcon" class="notif-icon" title="Lihat Pengumuman">
+  <span class="notif-icon-inner">🔔</span>
+  <span id="notifCount" class="notif-label"></span>
+</div>
+
+<!-- Popup Pengumuman -->
+<div id="eventPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <button id="closeBtn" class="close-btn">✕</button>
+    <h3 style="color: blue;"> (Daftar Pengumuman)</h3>
+    <div id="notifList" class="notif-list">
+      <!-- Pengumuman dari Firebase akan muncul di sini -->
+    </div>
+  </div>
+</div>
+
 </header>
 
   <!-- ===== PROFIL DUSUN SECTION ===== -->
@@ -126,7 +145,7 @@
 
    
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
 

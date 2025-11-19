@@ -449,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.querySelector("#cancelDelete").addEventListener("click", () => overlay.remove());
   }
 
-  // ------------------- Realtime listener -------------------
+  //Realtime listener 
   onValue(rootRef, (snapshot) => {
     const val = snapshot.val();
     renderAll(val);
@@ -457,7 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Firebase read error:", err);
   });
 
-  // ------------------- Submit main comment -------------------
+  //Submit main comment
   kirimBtn.addEventListener("click", async () => {
     const namaVal = namaEl.value.trim();
     const pesanVal = pesanEl.value.trim();
@@ -476,4 +476,87 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+});
+
+
+
+
+
+// notif lonceng dikanan atas
+const notifIcon = document.getElementById("notifIcon");
+const popup = document.getElementById("eventPopup");
+const closeBtn = document.getElementById("closeBtn");
+const notifList = document.getElementById("notifList");
+const notifCount = document.getElementById("notifCount");
+
+// === Firebase Reference ===
+const notifRef = ref(db, "announcements");
+
+// Ambil ID pengumuman yang sudah dibaca di localStorage
+let readList = JSON.parse(localStorage.getItem("readAnnouncements") || "[]");
+
+// === Ambil data realtime dari Firebase ===
+onValue(notifRef, (snapshot) => {
+  notifList.innerHTML = "";
+  let total = 0;
+  let unread = 0;
+
+  if (snapshot.exists()) {
+    snapshot.forEach((child) => {
+      total++;
+      const key = child.key;
+      const data = child.val();
+
+      const eventDiv = document.createElement("div");
+      eventDiv.className = "notif-item";
+      eventDiv.innerHTML = `
+        <h3>${data.title}</h3>
+        <p>${data.desc}</p>
+        <p><b>Tanggal:</b> ${data.date}</p>
+        <hr>
+      `;
+      notifList.appendChild(eventDiv);
+
+      // Hitung unread
+      if (!readList.includes(key)) {
+        unread++;
+      }
+    });
+  }
+
+  // Tampilkan jumlah notif (hanya unread)
+  notifCount.textContent = unread;
+  notifCount.style.display = unread > 0 ? "block" : "none";
+});
+
+// === Saat notif dibuka, tandai semua sebagai sudah dibaca ===
+notifIcon.addEventListener("click", (e) => {
+  e.stopPropagation();
+  popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+
+  // Ambil ulang semua announcement keys lalu simpan sebagai read
+  onValue(notifRef, (snapshot) => {
+    let newRead = [];
+    snapshot.forEach((child) => newRead.push(child.key));
+
+    localStorage.setItem("readAnnouncements", JSON.stringify(newRead));
+
+    // Hilangkan notif badge
+    notifCount.textContent = 0;
+    notifCount.style.display = "none";
+  }, { onlyOnce: true });
+});
+
+// === Tutup popup ===
+closeBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  popup.style.display = "none";
+});
+
+document.addEventListener("click", (e) => {
+  if (popup.style.display === "flex") {
+    if (!e.target.closest(".popup-box") && !e.target.closest("#notifIcon")) {
+      popup.style.display = "none";
+    }
+  }
 });

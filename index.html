@@ -14,23 +14,43 @@
   <div class="logo">Desa Sebangkang</div>
   <div class="menu-toggle" id="menu-toggle">&#9776;</div>
 
-  <nav id="nav-menu">
-    <a href="profil.html">Profil</a>
-
-    <div class="dropdown">
-      <button class="dropbtn">
-        Menu <span class="arrow">&#9662;</span>
-      </button>
-      <div class="dropdown-content">
-        <a href="jelajah.html">Tentang Kami</a>
-        <a href="jelajah2.html">Sejarah</a>
-        <a href="jelajah3.html">Budaya</a>
-        <a href="jelajah4.html">Hutan Adat</a>
+    <nav id="nav-menu">
+      <a href="profil.html">Profil</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Menu <span class="arrow">&#9662;</span>
+        </button>
+        <div class="dropdown-content">
+          <a href="jelajah.html">Tentang Kami</a>
+          <a href="jelajah2.html">Sejarah</a>
+          <a href="jelajah3.html">Budaya</a>
+          <a href="jelajah4.html">Hutan Adat</a>
+          
+        </div>
       </div>
-    </div>
+      <a href="kontak.html">Kontak</a>
+      <br>
+    </nav>
 
-    <a href="kontak.html">Kontak</a>
-  </nav>
+    <!-- Ikon Notifikasi -->
+     <!-- 🔔 Ikon Notifikasi -->
+<div id="notifIcon" class="notif-icon" title="Lihat Pengumuman">
+  <span class="notif-icon-inner">🔔</span>
+  <span id="notifCount" class="notif-label"></span>
+</div>
+
+<!-- Popup Pengumuman -->
+<div id="eventPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <button id="closeBtn" class="close-btn">✕</button>
+    <h3 style="color: blue;"> (Daftar Pengumuman)</h3>
+    <div id="notifList" class="notif-list">
+      <!-- Pengumuman dari Firebase akan muncul di sini -->
+    </div>
+  </div>
+</div>
+
+
 </header>
 
   <!-- ===== HERO SECTION ===== -->

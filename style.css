@@ -1345,3 +1345,126 @@ footer a:hover {
   background: rgba(0,0,0,0.12);
   border-radius: 8px;
 }
+
+
+
+
+
+
+
+/*notif lonceng dikanan atas*/
+.notif-icon {
+  position: fixed;
+  top: 17px;
+  right: 2px;
+  background: transparent;
+  border-radius: 0px;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+
+/* Membuat angka notifikasi tampil besar dan bulat */
+.notif-label {
+  background: transparent;
+  color: white;
+  font-size: 10px;      /* ➜ Ubah angka ini untuk memperbesar angka notif */
+  font-weight: bold;
+
+  min-width: 22px;      /* ➜ Ukuran lingkaran */
+  height: 22px;
+  padding: 0 6px;
+  line-height: 22px;
+
+  border-radius: 50px;  /* ➜ Membuat bulat */
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: -5px;            /* ➜ posisi di atas lonceng */
+  right: -5px;
+}
+
+
+
+.notif-icon:hover {
+  background: #f9f9f9;
+  transform: scale(1.03);
+}
+.notif-icon-inner {
+  font-size: 18px;
+  line-height: 1;
+}
+.notif-label {
+  font-weight: 500;
+}
+
+/*Efek blur background blur*/
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 80px 40px;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease;
+}
+
+
+.popup-box {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  padding: 16px 20px;
+  max-height: 190px; 
+  overflow-y: auto;  
+  font-size: 15px;
+  position: relative;
+  animation: slideIn 0.4s ease;
+}
+.popup-box h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #2c3e50;
+}
+.popup-box p {
+  margin: 3px 0;
+  color: #444;
+  line-height: 1.4;
+}
+.close-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  color: #777;
+}
+.close-btn:hover {
+  color: #000;
+}
+
+/* === Animasi === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
