@@ -1424,21 +1424,73 @@ footer a:hover {
 }
 
 
+
+
+/* ini untuk notif lonceng di kanan atas*/
+.popup-notif {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  padding: 16px 20px;
+  max-height: 190px;
+  overflow-y: auto;
+  font-size: 14px;
+
+  position: fixed;
+  top: 60px;       /* geser dari atas */
+  right: 20px;     /* muncul di kanan */
+  width: 280px;    /* ukuran popup */
+  
+  animation: slideIn 0.4s ease;
+}
+
+.popup-notif h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #2c3e50;
+}
+.popup-notif p {
+  margin: 3px 0;
+  color: #444;
+  line-height: 1.4;
+}
+.close-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  color: #777;
+}
+.close-btn:hover {
+  color: #000;
+}
+
+
+/* ini untuk popup replay komentar */
 .popup-box {
   background: #fff;
   border-radius: 14px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.25);
   padding: 16px 20px;
-  max-height: 190px; 
-  overflow-y: auto;  
+  max-height: 300px;
+  overflow-y: auto;
   font-size: 15px;
-  position: relative;
-  animation: slideIn 0.4s ease;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  animation:normal slideIn 0.4s alternate-reverse;
 }
+
 .popup-box h3 {
   margin: 0 0 6px;
   font-size: 16px;
-  color: #2c3e50;
+  color: #0a28d1;
 }
 .popup-box p {
   margin: 3px 0;
