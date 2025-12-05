@@ -560,3 +560,293 @@ document.addEventListener("click", (e) => {
     }
   }
 });
+
+
+
+
+
+
+
+
+
+// PEMESANAN TIKET WISATA - 3 TAHAP
+// Popup Elements
+const ticketPopup = document.getElementById("ticketPopup");
+const ticketPreview = document.getElementById("ticketPreview");
+
+// Tombol
+const btnPesanTiket = document.getElementById("btnPesanTiket");
+const btnCloseTicket = document.getElementById("btnCloseTicket");
+const btnLanjutPreview = document.getElementById("btnLanjutPreview");
+const btnClosePreview = document.getElementById("btnClosePreview");
+const btnDownloadPdf = document.getElementById("btnDownloadPdf");
+const btnConfirmStep3 = document.getElementById("btnConfirmStep3");
+
+// Field input
+const inputNama = document.getElementById("namaTiket");
+const inputEmail = document.getElementById("buyerEmail");
+const inputJumlah = document.getElementById("jumlahTiket");
+const inputWhatsapp = document.getElementById("whatsapp");
+const inputTanggal = document.getElementById("tanggalKunjungan");
+
+// Preview Elements
+const pvNama = document.getElementById("pvNama");
+const pvJumlah = document.getElementById("pvJumlah");
+const pvTanggal = document.getElementById("pvTanggal");
+const pvHargaSatuan = document.getElementById("pvHargaSatuan");
+const pvTotal = document.getElementById("pvTotal");
+
+// Harga tiket
+const HARGA_TIKET = 10000;
+
+// Notifikasi popup
+function showTicketNotif(msg) {
+  const box = document.getElementById("appNotif");
+  box.textContent = msg;
+  box.style.display = "block";
+  setTimeout(() => { box.style.display = "none"; }, 2500);
+}
+
+
+ // Menyimpan data sementara antara preview, download PDF, dan konfirmasi
+let currentTicket = {};
+
+btnPesanTiket.addEventListener("click", (e) => {
+  e.preventDefault();
+  ticketPopup.style.display = "flex";
+});
+
+
+
+// Popup ticket
+ticketPopup.addEventListener("click", (e) => {
+  // Jika yang diklik adalah overlay, bukan box di dalamnya
+  if (e.target === ticketPopup) {
+    ticketPopup.style.display = "none";
+  }
+});
+
+// Preview tiket
+ticketPreview.addEventListener("click", (e) => {
+  if (e.target === ticketPreview) {
+    ticketPreview.style.display = "none";
+  }
+});
+
+
+
+
+// CLOSE POPUP
+btnCloseTicket.addEventListener("click", () => {
+  ticketPopup.style.display = "none";
+});
+
+
+// LANJUT KE PREVIEW
+btnLanjutPreview.addEventListener("click", () => {
+  const nama = inputNama.value.trim();
+  const email = inputEmail.value.trim(); 
+  const whatsapp = inputWhatsapp.value.trim();
+  const jumlah = Number(inputJumlah.value);
+  const tanggal = inputTanggal.value;
+  const total = jumlah * HARGA_TIKET;
+
+  if (!nama || !email || !jumlah || !whatsapp || !tanggal) {
+    showTicketNotif("Semua data wajib diisi !");
+    return;
+  }
+
+  // Simpan sementara
+  currentTicket = { nama, email, whatsapp, jumlah, tanggal, total };
+
+  // Preview ringkas tanpa email & WA
+  pvNama.textContent = nama;
+  pvJumlah.textContent = jumlah;
+  pvTanggal.textContent = tanggal;
+  pvHargaSatuan.textContent = "Rp " + HARGA_TIKET.toLocaleString();
+  pvTotal.textContent = "Rp " + total.toLocaleString();
+
+  ticketPopup.style.display = "none";
+  ticketPreview.style.display = "flex";
+
+  // Reset tombol konfirmasi tahap 3
+  btnConfirmStep3.disabled = true;
+});
+
+
+// CLOSE PREVIEW
+const btnBackPreview = document.getElementById("btnBackPreview");
+btnBackPreview.addEventListener("click", () => {
+  ticketPreview.style.display = "none";  
+  ticketPopup.style.display = "flex";     
+});
+
+
+
+// DOWNLOAD PDF - TAHAP 2
+btnDownloadPdf.addEventListener("click", () => {
+  const { nama, email, whatsapp, jumlah, tanggal, total } = currentTicket;
+  const createdAt = Date.now(); 
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+
+  // Border & header
+  doc.setLineWidth(2);
+  doc.rect(30, 20, 550, 750); 
+  doc.setFontSize(18);
+  doc.text(" Tiket Wisata Dusun Sebangkang", 40, 50);
+
+  // Info pemesanan
+  doc.setFontSize(12);
+  const startY = 90;
+  const gap = 20;
+  doc.text(`Nama         : ${nama}`, 40, startY);
+  doc.text(`Email        : ${email}`, 40, startY + gap);
+  doc.text(`No WhatsApp  : ${whatsapp}`, 40, startY + gap*2);
+  doc.text(`Jumlah tiket : ${jumlah}`, 40, startY + gap*3);
+  doc.text(`Tanggal      : ${tanggal}`, 40, startY + gap*4);
+  doc.text(`Harga / tiket: Rp ${HARGA_TIKET.toLocaleString()}`, 40, startY + gap*5);
+  doc.text(`Total harga  : Rp ${total.toLocaleString()}`, 40, startY + gap*6);
+
+  doc.text(`No Tiket     : ${createdAt}`, 40, startY + gap*7);
+  
+  doc.text("Silakan tunjukkan tiket ini saat masuk, Jika Hilang ataupun terhapus silahkan Pesan ulang tiket.", 40, startY + gap*8);
+
+  // Generate QR Code canvas
+  const qrCanvas = document.createElement("canvas");
+  new QRCode(qrCanvas, {
+    text: createdAt.toString(),
+    width: 100,
+    height: 100,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+  });
+
+  // Tambahkan QR ke PDF
+  const qrImgData = qrCanvas.toDataURL("image/png");
+  doc.addImage(qrImgData, "PNG", 400, startY, 100, 100);
+
+  // Download PDF
+  doc.save(`Tiket_${nama}_${tanggal}.pdf`);
+
+  // Simpan createdAt ke currentTicket untuk tahap konfirmasi
+  currentTicket.createdAt = createdAt;
+
+  showTicketNotif("PDF profesional berhasil didownload! Klik Konfirmasi untuk menyelesaikan pemesanan.");
+  btnConfirmStep3.disabled = false;
+});
+
+
+
+// KONFIRMASI PEMESANAN - TAHAP 3
+btnConfirmStep3.addEventListener("click", async () => {
+  const { nama, email, whatsapp, jumlah, tanggal, total } = currentTicket;
+
+  try {
+    //  Simpan ke Firebase
+    await set(ref(db, `tickets/${Date.now()}`), {
+      name: nama,
+      email: email,
+      whatsapp: whatsapp,
+      qty: jumlah,
+      visitDate: tanggal,
+      price: total,
+      createdAt: Date.now()
+    });
+
+    //  Kirim email via Formspree
+    const formspreeUrl = "https://formspree.io/f/mwpwggpa"; 
+    const emailBody = `
+Halo ${nama},
+
+Terima kasih telah memesan tiket wisata Dusun Sebangkang.
+Detail Pemesanan:
+- Jumlah tiket      : ${jumlah}
+- Tanggal kunjungan : ${tanggal}
+- WhatsApp          : ${whatsapp}
+- Harga / tiket     : Rp ${HARGA_TIKET.toLocaleString()}
+- Total harga       : Rp ${total.toLocaleString()}
+- No Tiket          : ${currentTicket.createdAt}
+
+Silakan tunjukkan tiket ini saat masuk, Jika Hilang ataupun terhapus silahkan Pesan ulang tiket.
+
+Salam, Dusun Sebangkang
+`;
+
+    await fetch(formspreeUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: nama,
+        email: email,
+        message: emailBody
+      })
+    });
+
+
+      //untuk mengirim notifikasi ke WA admin
+    const adminWaNumber = "6285849602534"; 
+    const waMessage = `Tiket baru:
+      No Tiket: ${currentTicket.createdAt}
+      Nama: ${nama}
+      Email: ${email}
+      WhatsApp: ${whatsapp}
+      Jumlah: ${jumlah}
+      Tanggal: ${tanggal}
+      Total: Rp ${total.toLocaleString()}
+      Pesanan tiket hari ini, segera cek di dashboard Admin server dan jangan lupa cek No-tiket.`;
+    const waUrl = `https://wa.me/${adminWaNumber}?text=${encodeURIComponent(waMessage)}`;
+    window.open(waUrl, "_blank"); 
+
+
+
+    ticketPreview.style.display = "none";
+    showTicketNotif("Pemesanan berhasil dikonfirmasi! Email konfirmasi dikirim.");
+
+    // Reset form
+    inputNama.value = "";
+    inputEmail.value = "";
+    inputJumlah.value = "";
+    inputWhatsapp.value = "";
+    inputTanggal.value = "";
+
+    // Reset data sementara
+    currentTicket = {};
+
+  } catch (err) {
+    console.error(err);
+    showTicketNotif("Gagal menyimpan tiket atau mengirim email!", "#e74c3c");
+  }
+});
+
+
+
+
+
+// GALERI FOTO - ZOOM IN OUT
+const wisataGallery = document.querySelector("#wisataGallery");
+const wisataZoomOverlay = document.getElementById("wisataZoomOverlay");
+const wisataZoomedImage = document.getElementById("wisataZoomedImage");
+
+if (wisataGallery) {
+  const galleryImages = wisataGallery.querySelectorAll(".gallery-item img");
+
+  galleryImages.forEach(img => {
+    img.addEventListener("click", () => {
+      wisataZoomedImage.src = img.src;
+      wisataZoomOverlay.style.display = "flex";
+      setTimeout(() => wisataZoomOverlay.classList.add("show"), 10);
+    });
+  });
+}
+
+// Tutup overlay saat diklik di background
+wisataZoomOverlay.addEventListener("click", (e) => {
+  if (e.target === wisataZoomOverlay) {
+    wisataZoomOverlay.classList.remove("show");
+    setTimeout(() => {
+      wisataZoomOverlay.style.display = "none";
+    }, 400);
+  }
+});

@@ -1520,3 +1520,261 @@ footer a:hover {
   from { transform: translateY(-20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+
+
+/* ==== wisata html ==== */
+/*.wisata-reveal {
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 0.8s ease;
+}
+
+.wisata-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  width: 300px;
+}
+.wisata-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  margin-top: 30px;
+}*/
+
+/*  POPUP PEMESANAN TIKET  */
+.ticket-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;                 /* FIX */
+  align-items: center;           /* FIX */
+  justify-content: center;       /* FIX */
+  z-index: 99999;      
+  backdrop-filter : blur(5px)          /* FIX agar di atas semua */
+}
+
+.ticket-popup-box {
+  background: #fff;
+  width: 90%;
+  max-width: 380px;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  font-family: 'Poppins', sans-serif;
+  position: relative;            /* FIX: supaya tombol close tidak kabur */
+}
+
+.ticket-popup-box h3 {
+  text-align: center;
+  color: #1e7f00;
+  margin-bottom: 10px;
+}
+
+.ticket-popup-box label {
+  font-weight: 600;
+  display: block;
+  margin-top: 8px;
+}
+
+.ticket-popup-box input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #cfcfcf;
+  font-size: 14px;
+}
+
+.ticket-popup-close {
+  background: #ff3b3b;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;            /* FIX */
+  top: 10px;                     /* FIX */
+  right: 10px;                   /* FIX */
+}
+
+.ticket-popup-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+/*  PREVIEW */
+.ticket-preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;                 
+  align-items: center;           
+  justify-content: center;       
+  z-index: 100000;        
+  backdrop-filter : blur(5px)
+       
+}
+
+.ticket-preview-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  width: 320px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  position: relative;            
+}
+
+.ticket-preview-close {
+  background: #eee;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;           
+  top: 10px;
+  right: 10px;
+}
+
+
+.peraturan {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #0c0753;
+  margin-top: 10px;
+}
+
+.peraturan-item {
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efek hover */
+.peraturan-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .peraturan {
+    grid-template-columns: 1fr; /* Stack vertikal */
+  }
+}
+
+
+
+
+/*  NOTIF  */
+.app-notif {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: #2ecc71;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 110000;               /* FIX */
+  font-weight: 600;
+}
+
+.showTicketNotif {
+  animation:ease-in 0.9ms ease;
+}
+
+
+
+
+
+
+/* fitur zoom di foto galeri wisata */
+/* Gallery grid khusus wisata.html */
+#wisataGallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 15px;
+}
+
+#wisataGallery .gallery-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+#wisataGallery .gallery-item img {
+  width: 100%;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+#wisataGallery .gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+#wisataGallery .caption {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 4px 0;
+}
+
+/* Overlay Zoom wisata.html */
+#wisataZoomOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  cursor: zoom-out;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#wisataZoomOverlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#wisataZoomOverlay img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+  transform: scale(0.8);
+  transition: transform 0.4s ease;
+}
+
+#wisataZoomOverlay.show img {
+  transform: scale(1);
+}

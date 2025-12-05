@@ -10,11 +10,13 @@
 <body>
 
   <!-- ===== NAVBAR ===== -->
+   
  <header>
-  <div class="logo">Desa Sebangkang</div>
+  <div class="logo" onclick="location.href='index.html'">Desa Sebangkang</div>
   <div class="menu-toggle" id="menu-toggle">&#9776;</div>
 
   <nav id="nav-menu">
+    <a href="index.html">Beranda</a>
     <a href="profil.html">Profil</a>
 
     <div class="dropdown">
@@ -24,21 +26,183 @@
       <div class="dropdown-content">
         <a href="jelajah.html">Tentang Kami</a>
         <a href="jelajah2.html">Sejarah</a>
-        <a href="jelajah3.html">Budaya</a>
+         <a href="jelajah3.html">Budaya</a>
         <a href="jelajah4.html">Hutan Adat</a>
+        <a href="Wisata.html">Wisata</a>
       </div>
     </div>
 
     <a href="kontak.html">Kontak</a>
   </nav>
+
+   <!-- Ikon Notifikasi -->
+     <!-- 🔔 Ikon Notifikasi -->
+<div id="notifIcon" class="notif-icon" title="Lihat Pengumuman">
+  <span class="notif-icon-inner">🔔</span>
+  <span id="notifCount" class="notif-label"></span>
+</div>
+
+<!-- Popup Pengumuman -->
+<div id="eventPopup" class="popup-overlay" style="display:none;">
+   <div class="popup-notif" onclick="event.stopPropagation()">
+    <button id="closeBtn" class="close-btn">✕</button>
+    <h3 style="color: blue;"> (Daftar Pengumuman)</h3>
+    <div id="notifList" class="notif-list">
+      <!-- Pengumuman dari Firebase akan muncul di sini -->
+    </div>
+  </div>
+</div>
+
 </header>
 
+  <!-- ===== PROFIL DUSUN SECTION ===== -->
+ <section class="reveal">
+  <section class="galeri">
+    <h2>Wisata Dusun Sebangkang</h2>
+    <p class="subtext">Potret Nuansa Wisata Alam di Dusun Sebangkang</p>
+
+    <div id="wisataGallery" class="gallery-grid">
+      <div class="gallery-item">
+        <img src="Senja.jpg" alt="Senja di Sebangkang">
+        <div class="caption">Senja di Sebangkang</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Wisata.jpg" alt="Air Terjun Sebubut">
+        <div class="caption">Air Terjun Sebubut</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Wisata2.jpg" alt="Air Terjun Sebubut">
+        <div class="caption">Air Terjun Sebubut</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Ladang.jpg" alt="Wisata Alam">
+        <div class="caption">Wisata Alam</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Ladang2.jpg" alt="Wisata Alam">
+        <div class="caption">Wisata Alam</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Ladang3.jpg" alt="Foto Besar">
+        <div class="caption">Wisata Alam</div>
+      </div>
+      <div class="gallery-item">
+        <img src="AirTerjun.jpg" alt="Air Terjun Sebubut">
+        <div class="caption">Air Terjun Sebubut</div>
+      </div>
+      <div class="gallery-item">
+        <img src="Geografis.jpg" alt="Puncak Tugak">
+        <div class="caption">Puncak Tugak</div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Overlay Zoom khusus gallery wisata -->
+<div id="wisataZoomOverlay" style="display:none;">
+  <img id="wisataZoomedImage" src="" alt="Zoomed Photo">
+</div>
+
+
+
+
+<script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("bArznvZ1_hGfdZ8Rs"); 
+   })();
+</script>
+
+
+
+
+
+
+<!-- ================= POPUP PEMESANAN TIKET ================= -->
+<div id="ticketPopup" class="ticket-popup-overlay" style="display:none;">
+  <div class="ticket-popup-box">
+
+    <button class="ticket-popup-close" id="btnCloseTicket">✕</button>
+
+    <h3>Pesan Tiket Wisata</h3>
+
+    <label for="namaTiket">Nama:</label>
+    <input type="text" id="namaTiket" autocomplete="name" placeholder="Tulis Nama Anda...">
+
+    <label for="buyerEmail">Email:</label>
+    <input type="email" id="buyerEmail" autocomplete="email" placeholder="Tulis Email Yang Anda Gunakan...">
+
+    <label for="jumlahTiket">Jumlah Tiket:</label>
+    <input type="number" id="jumlahTiket" min="1" placeholder="1 Tiket Rp 10.000 / orang ">
+
+    <label for="whatsApp">No WhatsApp:</label>
+    <input type="number" id="whatsapp" placeholder="Contoh: 08***-****-****">
+
+    <label for="tanggalKunjungan">Tanggal Kunjungan:</label>
+    <input type="date" id="tanggalKunjungan">
+
+    <button class="ticket-popup-btn" id="btnLanjutPreview">
+      Lanjutkan
+    </button>
+
+  </div>
+</div>
+
+<!-- ================= PREVIEW TIKET ================= -->
+<div id="ticketPreview" class="ticket-preview-overlay" style="display:none;">
+  <div class="ticket-preview-box">
+    <button class="ticket-preview-close" id="btnBackPreview">Back</button>
+    <h3>Preview Tiket</h3>
+    <p><strong>Nama:</strong> <span id="pvNama"></span></p>
+    <p><strong>Jumlah:</strong> <span id="pvJumlah"></span></p>
+    <p><strong>Tanggal:</strong> <span id="pvTanggal"></span></p>
+    <p><strong>Harga / tiket:</strong> <span id="pvHargaSatuan"></span></p>
+    <p><strong>Total Harga:</strong> <span id="pvTotal"></span></p>
+    <div class="peraturan">
+      <div class="peraturan-item">
+        <p> Harap Mengkonfirmasi pesanan anda, jika hanya membawa bukti pdf nya </p>
+        saja dan tidak ada bukti pesanan melalui konfirmasi Pemesanan
+        <p>maka tiket dianggap tidak sah </p>
+        </div>
+    </div>
+    <!-- Tahap 2: Download PDF -->
+    <button id="btnDownloadPdf" class="ticket-popup-btn">
+      Download PDF
+    </button>
+
+    <!-- Tahap 3: Konfirmasi & Simpan (disabled dulu) -->
+    <button id="btnConfirmStep3" class="ticket-popup-btn" disabled>
+      Konfirmasi Pemesanan
+    </button>
+  </div>
+</div>
+
+
+<!-- =============== NOTIFIKASI =============== -->
+<div id="appNotif" class="app-notif" style="display:none;"></div>
+
+
+<!-- =============== TOMBOL PEMESANAN DI BAGIAN JAM BUKA =============== -->
  
+<section class="galeri"> 
+  <h2>Jam Buka</h2>
+  <div>
+    <p class="subtext">
+      Dusun Sebangkang menyambut wisatawan/pelancong setiap hari sabtu dan minggu mulai pukul 
+      <strong>'06.00 Pagi'</strong> hingga <strong>'12.00 Siang'</strong>.
+      &nbsp;
+    </p>
+  </div>
+</section>
 
 
 
-  
-  
+
+
+  <section class="galeri"><a href="#" id="btnPesanTiket" class="btn-primary">Pesan Tiket</a></section>
+     
+      
+      <br>
   <!-- ===== FOOTER ===== -->
   <footer>
     <p><strong>Alamat:</strong> Dusun Sebangkang, Kecamatan Empanang, Kabupaten Kapuas Hulu</p>
@@ -48,9 +212,15 @@
     </p>
   </footer>
 
-  <!-- Script utama (Firebase Modular) -->
+   
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
+
+
 
 
