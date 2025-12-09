@@ -634,8 +634,6 @@
   });
 
 
-
-
   // CLOSE POPUP
   btnCloseTicket.addEventListener("click", () => {
     ticketPopup.style.display = "none";
@@ -673,6 +671,9 @@
   });
 
 
+  
+
+
   // CLOSE PREVIEW
   const btnBackPreview = document.getElementById("btnBackPreview");
   btnBackPreview.addEventListener("click", () => {
@@ -702,7 +703,7 @@
     doc.text(`Nama         : ${nama}`, 40, startY);
     doc.text(`Email        : ${email}`, 40, startY + gap);
     doc.text(`No WhatsApp  : ${whatsapp}`, 40, startY + gap*2);
-    doc.text(`Jumlah tiket : ${jumlah}`, 40, startY + gap*3);
+    doc.text(`Jumlah tiket : ${jumlah} / orang`, 40, startY + gap*3);
     doc.text(`Tanggal      : ${tanggal}`, 40, startY + gap*4);
     doc.text(`Harga / tiket: Rp ${HARGA_TIKET.toLocaleString()}`, 40, startY + gap*5);
     doc.text(`Total harga  : Rp ${total.toLocaleString()}`, 40, startY + gap*6);
@@ -764,7 +765,7 @@
 
   Terima kasih telah memesan tiket wisata Dusun Sebangkang.
   Detail Pemesanan:
-  - Jumlah tiket      : ${jumlah}
+  - Jumlah tiket      : ${jumlah} / orang
   - Tanggal kunjungan : ${tanggal}
   - WhatsApp          : ${whatsapp}
   - Harga / tiket     : Rp ${HARGA_TIKET.toLocaleString()}

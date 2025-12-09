@@ -8,9 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- ===== NAVBAR ===== -->
-   
  <header>
   <div class="logo" onclick="location.href='index.html'">Desa Sebangkang</div>
   <div class="menu-toggle" id="menu-toggle">&#9776;</div>
@@ -48,55 +45,54 @@
     <button id="closeBtn" class="close-btn">✕</button>
     <h3 style="color: blue;"> (Daftar Pengumuman)</h3>
     <div id="notifList" class="notif-list">
-      <!-- Pengumuman dari Firebase akan muncul di sini -->
     </div>
   </div>
 </div>
-
 </header>
 
-  <!-- ===== PROFIL DUSUN SECTION ===== -->
- <section class="reveal">
+  <!--  PROFIL DUSUN SECTION -->
+<section class="reveal">
   <section class="galeri">
-    <h2>Wisata Dusun Sebangkang</h2>
-    <p class="subtext">Potret Nuansa Wisata Alam di Dusun Sebangkang</p>
-
-    <div id="wisataGallery" class="gallery-grid">
-      <div class="gallery-item">
-        <img src="Senja.jpg" alt="Senja di Sebangkang">
-        <div class="caption">Senja di Sebangkang</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Wisata.jpg" alt="Air Terjun Sebubut">
-        <div class="caption">Air Terjun Sebubut</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Wisata2.jpg" alt="Air Terjun Sebubut">
-        <div class="caption">Air Terjun Sebubut</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Ladang.jpg" alt="Wisata Alam">
-        <div class="caption">Wisata Alam</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Ladang2.jpg" alt="Wisata Alam">
-        <div class="caption">Wisata Alam</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Ladang3.jpg" alt="Foto Besar">
-        <div class="caption">Wisata Alam</div>
-      </div>
-      <div class="gallery-item">
-        <img src="AirTerjun.jpg" alt="Air Terjun Sebubut">
-        <div class="caption">Air Terjun Sebubut</div>
-      </div>
-      <div class="gallery-item">
-        <img src="Geografis.jpg" alt="Puncak Tugak">
-        <div class="caption">Puncak Tugak</div>
-      </div>
-    </div>
+    <h1>Wisata Dusun Sebangkang</h1>
+      <p class="subtext">Potret Nuansa Wisata Alam di Dusun Sebangkang</p>
+        <h5> (Klik Gambar untuk memperbesar)</h5>
+          <div id="wisataGallery" class="gallery-grid">
+            <div class="gallery-item">
+              <img src="Senja.jpg" alt="Senja di Sebangkang" loading="lazy">
+                <div class="caption">Senja di Sebangkang</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Wisata.jpg" alt="Air Terjun Sebubut" loading="lazy">
+                <div class="caption">Air Terjun Sebubut</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Wisata2.jpg" alt="Air Terjun Sebubut" loading="lazy">
+                <div class="caption">Air Terjun Sebubut</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Ladang.jpg" alt="Wisata Alam" loading="lazy">
+                <div class="caption">Wisata Alam</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Ladang2.jpg" alt="Wisata Alam" loading="lazy">
+                <div class="caption">Wisata Alam</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Ladang3.jpg" alt="Foto Besar" loading="lazy">
+                <div class="caption">Wisata Alam</div>
+            </div>
+            <div class="gallery-item">
+              <img src="AirTerjun.jpg" alt="Air Terjun Sebubut" loading="lazy">
+                <div class="caption">Air Terjun Sebubut</div>
+            </div>
+            <div class="gallery-item">
+              <img src="Geografis.jpg" alt="Puncak Tugak" loading="lazy">
+                <div class="caption">Puncak Tugak</div>
+            </div>
+          </div>             
   </section>
 </section>
+        
 
 <!-- Overlay Zoom khusus gallery wisata -->
 <div id="wisataZoomOverlay" style="display:none;">
@@ -118,29 +114,21 @@
 
 
 
-<!-- ================= POPUP PEMESANAN TIKET ================= -->
+<!--  POPUP PEMESANAN TIKET  -->
 <div id="ticketPopup" class="ticket-popup-overlay" style="display:none;">
   <div class="ticket-popup-box">
-
     <button class="ticket-popup-close" id="btnCloseTicket">✕</button>
-
-    <h3>Pesan Tiket Wisata</h3>
-
+      <h3>Pesan Tiket Wisata</h3>
     <label for="namaTiket">Nama:</label>
-    <input type="text" id="namaTiket" autocomplete="name" placeholder="Tulis Nama Anda...">
-
+      <input type="text" id="namaTiket" autocomplete="name" placeholder="Tulis Nama Anda...">
     <label for="buyerEmail">Email:</label>
-    <input type="email" id="buyerEmail" autocomplete="email" placeholder="Tulis Email Yang Anda Gunakan...">
-
+      <input type="email" id="buyerEmail" autocomplete="email" placeholder="Tulis Email Yang Anda Gunakan...">
     <label for="jumlahTiket">Jumlah Tiket:</label>
-    <input type="number" id="jumlahTiket" min="1" placeholder="1 Tiket Rp 10.000 / orang ">
-
+      <input type="number" id="jumlahTiket" min="1" placeholder="1 Tiket Rp 10.000 / orang ">
     <label for="whatsApp">No WhatsApp:</label>
-    <input type="number" id="whatsapp" placeholder="Contoh: 08***-****-****">
-
+      <input type="number" id="whatsapp" placeholder="Contoh: 08***-****-****">
     <label for="tanggalKunjungan">Tanggal Kunjungan:</label>
-    <input type="date" id="tanggalKunjungan">
-
+      <input type="date" id="tanggalKunjungan">
     <button class="ticket-popup-btn" id="btnLanjutPreview">
       Lanjutkan
     </button>
@@ -148,7 +136,7 @@
   </div>
 </div>
 
-<!-- ================= PREVIEW TIKET ================= -->
+<!-- PREVIEW TIKET  -->
 <div id="ticketPreview" class="ticket-preview-overlay" style="display:none;">
   <div class="ticket-preview-box">
     <button class="ticket-preview-close" id="btnBackPreview">Back</button>
@@ -199,18 +187,18 @@
 
 
 
-  <section class="galeri"><a href="#" id="btnPesanTiket" class="btn-primary">Pesan Tiket</a></section>
+<section class="galeri"><a href="#" id="btnPesanTiket" class="btn-primary">Pesan Tiket</a></section>
      
       
-      <br>
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    <p><strong>Alamat:</strong> Dusun Sebangkang, Kecamatan Empanang, Kabupaten Kapuas Hulu</p>
-    <p>© 2025 Dusun Sebangkang | Disusun oleh : Adventus 
-      <a href="https://web.facebook.com/adventus.adventus.357?locale=id_ID" target="_blank">Facebook</a> · 
-      <a href="https://www.instagram.com/advnt_boy/" target="_blank">Instagram</a>
-    </p>
-  </footer>
+<br>
+  
+<footer>
+  <p><strong>Alamat:</strong> Dusun Sebangkang, Kecamatan Empanang, Kabupaten Kapuas Hulu</p>
+  <p>© 2025 Dusun Sebangkang | Disusun oleh : Adventus 
+    <a href="https://web.facebook.com/adventus.adventus.357?locale=id_ID" target="_blank">Facebook</a> · 
+    <a href="https://www.instagram.com/advnt_boy/" target="_blank">Instagram</a>
+  </p>
+</footer>
 
    
   
