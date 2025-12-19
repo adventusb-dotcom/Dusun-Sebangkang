@@ -65,10 +65,8 @@
     return `<div class="komentar-avatar" style="background:${warna}">${escapeHTML(huruf)}</div>`;
   }
 
-  //menu garis 3 di layar hp
-  document.addEventListener("DOMContentLoaded", () => {
 
-    //MENU BURGER "Hp"
+  document.addEventListener("DOMContentLoaded", () => {
     const menuToggle = document.getElementById("menu-toggle");
     const navMenu = document.getElementById("nav-menu");
     if (menuToggle && navMenu) {
@@ -77,7 +75,7 @@
       });
     }
 
-    //DROPDOWN MENU
+
     document.querySelectorAll(".dropbtn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -89,14 +87,13 @@
       });
     });
 
-    //Tutup dropdown
+
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".dropdown") && !e.target.classList.contains("dropbtn")) {
         document.querySelectorAll('.dropdown-content').forEach(dc => dc.classList.remove('show'));
       }
     });
 
-    //Animasi Foto
     function revealOnScroll() {
       const reveals = document.querySelectorAll(".reveal");
       const windowHeight = window.innerHeight;
@@ -114,24 +111,19 @@
     window.addEventListener("scroll", revealOnScroll);
     window.addEventListener("load", revealOnScroll);
 
-    //Komentar firebase
     const namaEl = document.getElementById("nama");
     const pesanEl = document.getElementById("pesan");
     const kirimBtn = document.getElementById("kirimKomentar");
     const daftarKomentar = document.getElementById("daftarKomentar");
 
-    // Jika elemen komentar tidak ada di halaman ini, hentikan bagian komentar (agar aman di halaman lain)
     if (!daftarKomentar) return;
-
-    // root reference untuk komentar
     const rootRef = ref(db, "komentar");
-
-    // simpan userId lokal untuk menandai pemilik komentar
     const userIdKey = "userId";
-    const userId = localStorage.getItem(userIdKey) || (crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
-    localStorage.setItem(userIdKey, userId);
-
-    // tetap pertahankan fungsi-fungsi lama untuk kompatibilitas
+    const userId = localStorage.getItem(userIdKey) || (crypto && 
+      crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+      localStorage.setItem(userIdKey, userId);
+      
+      
     async function tambahKomentarDB(nama, pesan) {
       const newRef = push(rootRef);
       const data = { id: newRef.key, userId, nama, pesan, waktu: Date.now() };
@@ -139,7 +131,6 @@
       return newRef.key;
     }
 
-    // parentId = id komentar root; replyToName = nama yang dibalas (string)
     async function tambahBalasanDB(parentId, nama, pesan, replyToName = null) {
       if (!parentId) return;
       const repliesRef = ref(db, `komentar/${parentId}/replies`);
@@ -570,33 +561,24 @@
 
 
   // PEMESANAN TIKET WISATA - 3 TAHAP
-  // Popup Elements
   const ticketPopup = document.getElementById("ticketPopup");
   const ticketPreview = document.getElementById("ticketPreview");
-
-  // Tombol
   const btnPesanTiket = document.getElementById("btnPesanTiket");
   const btnCloseTicket = document.getElementById("btnCloseTicket");
   const btnLanjutPreview = document.getElementById("btnLanjutPreview");
   const btnClosePreview = document.getElementById("btnClosePreview");
   const btnDownloadPdf = document.getElementById("btnDownloadPdf");
   const btnConfirmStep3 = document.getElementById("btnConfirmStep3");
-
-  // Field input
   const inputNama = document.getElementById("namaTiket");
   const inputEmail = document.getElementById("buyerEmail");
   const inputJumlah = document.getElementById("jumlahTiket");
   const inputWhatsapp = document.getElementById("whatsapp");
   const inputTanggal = document.getElementById("tanggalKunjungan");
-
-  // Preview Elements
   const pvNama = document.getElementById("pvNama");
   const pvJumlah = document.getElementById("pvJumlah");
   const pvTanggal = document.getElementById("pvTanggal");
   const pvHargaSatuan = document.getElementById("pvHargaSatuan");
   const pvTotal = document.getElementById("pvTotal");
-
-  // Harga tiket
   const HARGA_TIKET = 10000;
 
   // Notifikasi popup
@@ -604,7 +586,7 @@
     const box = document.getElementById("appNotif");
     box.textContent = msg;
     box.style.display = "block";
-    setTimeout(() => { box.style.display = "none"; }, 2500);
+    setTimeout(() => { box.style.display = "none"; }, 6000);
   }
 
 
@@ -620,7 +602,6 @@
 
   // Popup ticket
   ticketPopup.addEventListener("click", (e) => {
-    // Jika yang diklik adalah overlay, bukan box di dalamnya
     if (e.target === ticketPopup) {
       ticketPopup.style.display = "none";
     }
@@ -633,11 +614,26 @@
     }
   });
 
-
   // CLOSE POPUP
   btnCloseTicket.addEventListener("click", () => {
     ticketPopup.style.display = "none";
   });
+
+
+
+
+  function generateTicketCode(length = 5) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+ }
+
+
+
+
 
 
   // LANJUT KE PREVIEW
@@ -653,8 +649,6 @@
       showTicketNotif("Semua data wajib diisi !");
       return;
     }
-
-    // Simpan sementara
     currentTicket = { nama, email, whatsapp, jumlah, tanggal, total };
 
     // Preview ringkas tanpa email & WA
@@ -665,14 +659,8 @@
     pvTotal.textContent = "Rp " + total.toLocaleString();
 
     ticketPopup.style.display = "none";
-    ticketPreview.style.display = "flex";
-
-    
+    ticketPreview.style.display = "flex"; 
   });
-
-
-  
-
 
   // CLOSE PREVIEW
   const btnBackPreview = document.getElementById("btnBackPreview");
@@ -681,12 +669,10 @@
     ticketPopup.style.display = "flex";     
   });
 
-
-
   // DOWNLOAD PDF - TAHAP 2
   btnDownloadPdf.addEventListener("click", () => {
     const { nama, email, whatsapp, jumlah, tanggal, total } = currentTicket;
-    const createdAt = Date.now(); 
+    const createdAt = generateTicketCode();
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
 
@@ -711,8 +697,6 @@
     doc.text(`No Tiket     : ${createdAt}`, 40, startY + gap*7);
     
     doc.text("Silakan tunjukkan tiket ini saat masuk, Jika Hilang ataupun terhapus silahkan Pesan ulang tiket.", 40, startY + gap*8);
-
-    // Generate QR Code canvas
     const qrCanvas = document.createElement("canvas");
     new QRCode(qrCanvas, {
       text: createdAt.toString(),
@@ -723,18 +707,11 @@
       correctLevel : QRCode.CorrectLevel.H
     });
 
-    // Tambahkan QR ke PDF
     const qrImgData = qrCanvas.toDataURL("image/png");
     doc.addImage(qrImgData, "PNG", 400, startY, 100, 100);
-
-    // Download PDF
     doc.save(`Tiket_${nama}_${tanggal}.pdf`);
-
-    // Simpan createdAt ke currentTicket untuk tahap konfirmasi
     currentTicket.createdAt = createdAt;
-
-    showTicketNotif("PDF profesional berhasil didownload! Klik Konfirmasi untuk menyelesaikan pemesanan.");
-    
+    showTicketNotif("PDF profesional berhasil didownload! Jangan Lupa Konfirmasi untuk menyelesaikan pemesanan.");
   });
 
 
@@ -747,14 +724,14 @@
 
     try {
       //  Simpan ke Firebase
-      await set(ref(db, `tickets/${Date.now()}`), {
+      await set(ref(db, `tickets/${currentTicket.createdAt}`), {
         name: nama,
         email: email,
         whatsapp: whatsapp,
         qty: jumlah,
         visitDate: tanggal,
         price: total,
-        createdAt: Date.now()
+        createdAt: currentTicket.createdAt
       });
     
 
