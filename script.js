@@ -818,3 +818,168 @@
     }
   });
   });
+
+
+
+
+
+
+
+
+// ===== GALERI ZOOM SLIDER FIXED & STABLE =====
+const galleryImgs = Array.from(
+  document.querySelectorAll("#wisataGallery .gallery-item img")
+);
+
+const overlay = document.getElementById("wisataZoomOverlay");
+let zoomImg = document.getElementById("wisataZoomedImage");
+
+let currentIndex = 0;
+let hideTimer = null;
+
+// ===== BUAT UI VIA JS =====
+const navPrev = document.createElement("div");
+const navNext = document.createElement("div");
+const indicator = document.createElement("div");
+
+navPrev.innerHTML = "&#10094;";
+navNext.innerHTML = "&#10095;";
+
+Object.assign(navPrev.style, {
+  position: "absolute",
+  left: "20px",
+  fontSize: "42px",
+  color: "#fff",
+  cursor: "pointer",
+  userSelect: "none",
+  opacity: "0",
+  transition: "0.3s",
+  zIndex: "10000"
+});
+
+Object.assign(navNext.style, {
+  position: "absolute",
+  right: "20px",
+  fontSize: "42px",
+  color: "#fff",
+  cursor: "pointer",
+  userSelect: "none",
+  opacity: "0",
+  transition: "0.3s",
+  zIndex: "10000"
+});
+
+Object.assign(indicator.style, {
+  position: "absolute",
+  bottom: "20px",
+  color: "#fff",
+  fontSize: "14px",
+  opacity: "0",
+  transition: "0.3s",
+  zIndex: "10000"
+});
+
+overlay.append(navPrev, navNext, indicator);
+
+// ===== OPEN ZOOM =====
+galleryImgs.forEach((img, index) => {
+  img.addEventListener("click", () => {
+    currentIndex = index;
+    zoomImg.src = img.src;
+    overlay.style.display = "flex";
+    setTimeout(() => overlay.classList.add("show"), 10);
+    updateUI();
+    showUI();
+    preload();
+  });
+});
+
+// ===== UPDATE UI =====
+function updateUI() {
+  indicator.textContent = `${currentIndex + 1} / ${galleryImgs.length}`;
+  navPrev.style.display = currentIndex === 0 ? "none" : "block";
+  navNext.style.display =
+    currentIndex === galleryImgs.length - 1 ? "none" : "block";
+}
+
+// ===== PRELOAD =====
+function preload() {
+  [currentIndex + 1, currentIndex - 1].forEach(i => {
+    if (galleryImgs[i]) {
+      const img = new Image();
+      img.src = galleryImgs[i].src;
+    }
+  });
+}
+
+// ===== ANIMASI =====
+function animateSlide(direction) {
+  zoomImg.style.transition = "none";
+  zoomImg.style.opacity = "0";
+  zoomImg.style.transform =
+    direction === "next" ? "translateX(40px)" : "translateX(-40px)";
+
+  requestAnimationFrame(() => {
+    zoomImg.src = galleryImgs[currentIndex].src;
+    zoomImg.style.transition = "0.35s ease";
+    zoomImg.style.opacity = "1";
+    zoomImg.style.transform = "translateX(0)";
+  });
+
+  preload();
+  updateUI();
+  showUI();
+}
+
+// ===== NAV =====
+navNext.onclick = () => {
+  if (currentIndex >= galleryImgs.length - 1) return;
+  currentIndex++;
+  animateSlide("next");
+};
+
+navPrev.onclick = () => {
+  if (currentIndex <= 0) return;
+  currentIndex--;
+  animateSlide("prev");
+};
+
+// ===== AUTO HIDE =====
+function showUI() {
+  clearTimeout(hideTimer);
+  [navPrev, navNext, indicator].forEach(el => (el.style.opacity = "1"));
+  hideTimer = setTimeout(() => {
+    [navPrev, navNext, indicator].forEach(el => (el.style.opacity = "0"));
+  }, 2000);
+}
+
+overlay.addEventListener("mousemove", showUI);
+overlay.addEventListener("touchstart", showUI);
+
+// ===== SWIPE =====
+let startX = 0;
+overlay.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+overlay.addEventListener("touchend", e => {
+  const diff = startX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 60) {
+    diff > 0 ? navNext.onclick() : navPrev.onclick();
+  }
+});
+
+// ===== KEYBOARD =====
+document.addEventListener("keydown", e => {
+  if (!overlay.classList.contains("show")) return;
+  if (e.key === "ArrowRight") navNext.onclick();
+  if (e.key === "ArrowLeft") navPrev.onclick();
+});
+
+// ===== CLOSE =====
+overlay.addEventListener("click", e => {
+  if (e.target === overlay) {
+    overlay.classList.remove("show");
+    setTimeout(() => (overlay.style.display = "none"), 300);
+  }
+});

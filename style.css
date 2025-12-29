@@ -1751,7 +1751,7 @@ footer a:hover {
 /* tampilan HP */
 @media (max-width: 600px) {
   #wisataGallery {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -1803,7 +1803,6 @@ footer a:hover {
 #wisataZoomOverlay.show img {
   transform: scale(1);
 }
-
 
 
 
